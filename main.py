@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # ^ Don't mind this thing it's just for ian 
 
-import system
+import sys
 import time
 import pygame
 
