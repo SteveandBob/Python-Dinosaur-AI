@@ -4,6 +4,7 @@
 import sys
 import time
 import pygame
+# reminder to install pygame (pip install pygame)
 
 # main function
 def main():
