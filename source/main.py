@@ -6,7 +6,7 @@
 import sys
 import time
 import pygame
-from game import *
+from game import mainGame
 from ai import *
 
 running = True;
@@ -14,8 +14,6 @@ running = True;
 # main function
 def main():
     mainGame()
-
-initScreen()
 
 while (running == True):
     if(__name__ == "__main__"):
