@@ -6,6 +6,8 @@
 import sys
 import time
 import pygame
+from game import *
+from ai import *
 # reminder to install pygame (pip install pygame)
 
 
