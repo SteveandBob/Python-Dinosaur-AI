@@ -2,10 +2,11 @@ import sys
 import time
 import pygame
 import thread
+import random
 #begin programming the game
 
 touchingGround = False
-jumpIntervals = [4,4,3,3,3,2,2,2,2,1,1,1,-1,-1,-1,-2,-2,-2,-2,-3,-3,-3,-4,-4]
+jumpIntervals = [10,10,6,6,6,3,3,3,3,2,2,1,-1,-2,-2,-3,-3,-3,-3,-6,-6,-6,-10,-10]
 
 playerX = 100
 playerY = 350
@@ -18,19 +19,22 @@ height = 40
 speed = 5
 screenY = 400
 screenX = 800
-obstacle1
-obstacle2
-obstacle3
+minTime = 0.5
+maxTime = 2
+delay = 0
 
-class obstacle:
-    def __init__(self, uniqueID):
-        self.ID = uniqueID
-    def getID(self):
-        return self.ID
-    def draw(self):
-        pygame.draw.rect(screen, BLACK, [initX, initY, initX + blockW, initY + blockH])
-    def move(self):
-        initX -= 5
+def spawn(blockX):
+    delay = round(random.uniform(minTime, maxTime), 1)
+    time.sleep(delay)
+    while(blockX > 0):
+        pygame.draw.rect(screen, BLACK, [blockX, initY, initX + blockW, initY + blockH])
+        blockX -= speed
+        time.sleep(20)
+    return
+
+def drawPlayer():
+    pygame.draw.rect(screen, RED, [playerX, playerY, playerX + width, playerY + height])
+    return
 
 def jump():
     if(touchingGround == True):
@@ -48,10 +52,7 @@ def mainGame():
     for event in pygame.event.get():
         if(event.Type == KEYUP):
             thread.start_new_thread(jump)
-    if(not obstacle1):
-        obstacle1 = obstacle(1)
-    elif(not obstacle2):
-        obstacle2 = obstacle(2)
-    elif(not obstacle3):
-        obstacle3 = obstacle(3)
+    drawPlayer()
+    thread.start_new_thread(spawn, (initX))
+    thread.start_new_thread(spawn, (initX))
     return
