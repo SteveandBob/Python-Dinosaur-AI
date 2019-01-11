@@ -1,21 +1,22 @@
 #!/usr/bin/env python3
 # don't mind this thing it's just for linux/mac users
 
-# using python version 3.7
+# using python version 3.7.0
 
 import sys
 import time
 import pygame
 from game import *
 from ai import *
-# reminder to install pygame (pip install pygame)
 
+running = True;
 
 # main function
 def main():
-    print("\nno I hate this world.\n")
+    mainGame()
 
+initScreen()
 
-# de facto crap
-if __name__ == '__main__':
-    main()
+while (running == True):
+    if(__name__ == "__main__"):
+        main()
