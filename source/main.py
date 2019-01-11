@@ -9,7 +9,11 @@ import pygame
 from game import *
 from ai import *
 
+<<<<<<< HEAD
 running = True;
+=======
+bool running = True;
+>>>>>>> master
 
 # main function
 def main():
