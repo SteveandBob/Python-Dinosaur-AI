@@ -17,11 +17,9 @@ class obstacle:
     def getID(self):
         return self.ID
 
-def jump:
-    if(touchingGround == False):
-        continue()
+def jump():
     if(touchingGround == True):
-        for(i in jumpIntervals):
+        for i in jumpIntervals:
             playerY += i
             time.sleep(20)
     return
@@ -35,5 +33,4 @@ def mainGame():
     for event in pygame.event.get():
         if(event.Type == KEYUP):
             thread.start_new_thread(jump)
-    
     return
