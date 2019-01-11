@@ -1,6 +1,7 @@
 import sys
 import time
 import pygame
+import thread
 #begin programming the game
 
 touchingGround = False
@@ -13,8 +14,9 @@ def jump:
     if(touchingGround == False):
         continue()
     if(touchingGround == True):
-        for(int i = 0, i < len(jumpIntervals), ++i):
-            playerY += jumpIntervals[i]
+        for(i in jumpIntervals):
+            playerY += i
+            time.sleep(20)
     return
 
 def initScreen():
@@ -25,5 +27,5 @@ def initScreen():
 def mainGame():
     for event in pygame.event.get():
         if(event.Type == KEYUP):
-            jump()
+            thread.start_new_thread(jump)
     return
