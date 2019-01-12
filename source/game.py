@@ -15,7 +15,8 @@ playerX = 100
 playerY = 350
 initX = 1000
 initY = 350
-blockX = 1000
+block1X = 900
+block2X = 1400
 blockW = 25
 blockH = 45
 width = 20
@@ -26,17 +27,26 @@ screenX = 800
 minTime = 50
 maxTime = 2000
 delay = 0
-scoreDelay = 100
 
 pygame.init()
 screen = pygame.display.set_mode((screenX, screenY))
-def initScreen():
+def refreshScreen():
     screen.fill((255,255,255))
     return
 
-def spawn():
-    pygame.draw.rect(screen, (0,0,0), [blockX, initY, initX + blockW, initY + blockH])
-    blockX -= speed
+def moveBlocks():
+    block1X -= speed
+    block2X -= speed
+    pygame.draw.rect(screen, (0,0,0), [block1X, initY, initX + blockW, initY + blockH])
+    pygame.draw.rect(screen, (0,0,0), [block2X, initY, initX + blockW, initY + blockH])
+    if(block1X <= -50):
+        delay = random.randint(minTime, maxTime)
+        time.wait(delay)
+        block1X = 900
+    if(block2X <= -50):
+        delay = random.randint(minTime, maxTime)
+        time.wait(delay)
+        block2X = 900
 
 def drawPlayer():
     pygame.draw.rect(screen, (255,0,0), [playerX, playerY, playerX + width, playerY + height])
@@ -46,6 +56,7 @@ def jump():
     if(touchingGround == True):
         for i in jumpIntervals:
             playerY += i
+            pygame.draw.rect(screen, (255,0,0), [playerX, playerY, playerX + width, playerY + height])
             time.wait(20)
     return
 
@@ -59,15 +70,17 @@ def collisionDetect():
         touchingGround = False
 
 def mainGame():
-    initScreen()
-    for event in pygame.event.get():
-        if(event.type == pygame.key.get_pressed()):
-            if(event.key == K_UP):
-                jump()
-        elif(event.type == QUIT):
-            pygame.quit()
-            sys.exit()
-    drawPlayer()
-    spawn()
-    collisionDetect()
+    while(True):
+        refreshScreen()
+        if(pygame.event.get()):
+            if(event.type == pygame.key.get_pressed()):
+                if(event.key == K_UP):
+                    jump()
+             elif(event.type == QUIT):
+                pygame.quit()
+                sys.exit()
+        else:
+            drawPlayer()
+        moveBlocks()
+        collisionDetect()
     return
