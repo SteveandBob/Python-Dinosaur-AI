@@ -3,18 +3,21 @@
 
 # using python version 3.7.0
 
-import sys
-import time
-import pygame
-from game import mainGame
-from ai import *
+# commented out all currently unused modules - Ian
+# import sys
+# import time
+# import pygame
+import game
+# import ai
 
-running = True;
+running = True
+
 
 # main function
 def main():
-    mainGame()
+    game.mainGame()
 
-while (running == True):
+
+while (running):
     if(__name__ == "__main__"):
         main()
