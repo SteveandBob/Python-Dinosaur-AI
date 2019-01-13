@@ -4,9 +4,8 @@
 import sys
 import time
 import pygame
-# import threading
+import threading
 import random
-# from pygame import *
 
 # begin programming the game
 
@@ -76,7 +75,6 @@ class jumpThreads(threading.Thread):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.name = name
-        self.counter = counter
     def run(self):
         jump(self.name, 20)
 
@@ -94,7 +92,7 @@ def jump(threadName, delay):
                 threadName.exit()
     return
 
-jumpThread = jumpThreads(1, jumping)
+jumpThread = jumpThreads(1, "jumping")
 
 def collisionDetect():
     global playerY, touchingGround

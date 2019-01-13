@@ -4,7 +4,7 @@
 # using python version 3.7.0
 
 # commented out all currently unused modules - Ian
-# import sys
+import sys
 # import time
 # import pygame
 import game
