@@ -69,8 +69,18 @@ def drawPlayer():
     pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY + height])
     return
 
+exitFlag = 0
 
-def jump():
+class jumpThreads(threading.Thread):
+    def __init__(self, threadID, name):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.counter = counter
+    def run(self):
+        jump(self.name, 20)
+
+def jump(threadName, delay):
     global playerY
     # TODO #2 - FIX STATEMENT ABOVE
     # SEE TODO #1
@@ -79,9 +89,12 @@ def jump():
         for i in jumpIntervals:
             playerY += i
             pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY + height])
-            time.wait(20)
+            time.wait(delay)
+            if(exitFlag):
+                threadName.exit()
     return
 
+jumpThread = jumpThreads(1, jumping)
 
 def collisionDetect():
     global playerY, touchingGround
@@ -103,7 +116,10 @@ def mainGame():
         if(pygame.event.get()):
             if(pygame.event.EventType == pygame.key.get_pressed()):
                 if(pygame.event.key == pygame.K_UP):
-                    jump()
+                    if(jumpThread.isAlive() == False):
+                        jumpThread.start()
+                    else:
+                        jumpThread.join()
             elif(pygame.event.EventType == pygame.QUIT):
                 pygame.quit()
                 sys.exit()
