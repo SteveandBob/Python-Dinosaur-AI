@@ -100,7 +100,8 @@ def collisionDetect():
     # SEE TODO #1
     # - ian
     if((playerX + width) > (block1X or block2X) and playerY < (initY + blockH) and playerX < (block1X or block2X)):
-        quit()
+        pygame.quit()
+        sys.exit()
     if(playerY <= 350):
         playerY = 350
         touchingGround = True
