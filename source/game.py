@@ -1,23 +1,14 @@
 #!/usr/bin/env python3
-<<<<<<< HEAD
-import sys
-import time
-import pygame
-#import thread
-=======
 # shebang for linux/mac/unix users
 
-import sys
-import time
-import pygame
-import threading
->>>>>>> 87e2ed47e3d822efd23c1ce5d8d99040420689f7
-import random
+import sys, time, pygame, threading, random
 
 # begin programming the game
 
 touchingGround = True
-jumpIntervals = [10, 10, 6, 6, 6, 3, 3, 3, 3, 2, 2, 1, -1, -2, -2, -3, -3, -3, -3, -6, -6, -6, -10, -10]
+jumpIntervals = [10, 10, 6, 6, 6, 3, 3, 3, 3, 2, 2, 1]
+for i in range(12):
+    jumpIntervals.append(jumpIntervals[11 - i] * -1)
 
 spawn1 = False
 spawn2 = False
@@ -34,7 +25,7 @@ height = 40
 speed = 5
 screenY = 400
 screenX = 800
-minTime = 50
+minTime = 500
 maxTime = 2000
 delay = 0
 
@@ -117,18 +108,6 @@ def collisionDetect():
 
 
 def mainGame():
-<<<<<<< HEAD
-    for EVENT in pygame.event.get():
-        if(EVENT.Type == KEYDOWN):
-            if(pygame.key.get_pressed()[K_UP]):
-                thread.start_new_thread(jump)
-        elif(EVENT.Type == QUIT()):
-            quit()
-    drawPlayer()
-    thread.start_new_thread(spawn, (initX))
-    thread.start_new_thread(spawn, (initX))
-    collisionDetect()
-=======
     while(True):
         refreshScreen()
         if(pygame.event.get()):
@@ -145,5 +124,4 @@ def mainGame():
             drawPlayer()
         moveBlocks()
         collisionDetect()
->>>>>>> 87e2ed47e3d822efd23c1ce5d8d99040420689f7
     return
