@@ -1,7 +1,8 @@
+#!/usr/bin/env python3
 import sys
 import time
 import pygame
-import thread
+#import thread
 import random
 from pygame import *
 #begin programming the game
