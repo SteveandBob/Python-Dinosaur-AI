@@ -53,8 +53,8 @@ def moveBlocks():
     # - ian
     block1X -= speed
     block2X -= speed
-    pygame.draw.rect(screen, (0, 0, 0), [block1X, initY, initX + blockW, initY + blockH])
-    pygame.draw.rect(screen, (0, 0, 0), [block2X, initY, initX + blockW, initY + blockH])
+    pygame.draw.rect(screen, (0, 0, 0), [block1X, initY, initX + blockW, initY - blockH])
+    pygame.draw.rect(screen, (0, 0, 0), [block2X, initY, initX + blockW, initY - blockH])
     if(block1X <= -50):
         delay = random.randint(minTime, maxTime)
         time.wait(delay)
@@ -66,7 +66,7 @@ def moveBlocks():
 
 
 def drawPlayer():
-    pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY + height])
+    pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY - height])
     return
 
 
@@ -107,7 +107,7 @@ def collisionDetect():
     # TODO #3 - FIX STATEMENT ABOVE
     # SEE TODO #1
     # - ian
-    if(((playerX + width) > (block1X or block2X)) and (playerY < (initY + blockH)) and (playerX < (block1X or block2X))):
+    if((((((playerX + width) > block1X) or ((playerX + width) > block2X))) and (((playerX + width) < (block1X + blockW)) or ((playerX + width) < (block2X + blockW)))) and (playerY < (initY - blockH)) and (((playerX > block1X) or (playerX > block2X)) and ((playerX < (block1X + blockW)) or (playerX < (block2X + blockW))))):
         pygame.quit()
         sys.exit()
     if(playerY <= 350):
@@ -134,4 +134,5 @@ def mainGame():
             drawPlayer()
         moveBlocks()
         collisionDetect()
+        pygame.display.flip()
     return
