@@ -1,17 +1,9 @@
 #!/usr/bin/env python3
-<<<<<<< HEAD
-import sys
-import time
-import pygame
-#import thread
-=======
 # shebang for linux/mac/unix users
-
 import sys
 import time
 import pygame
 import threading
->>>>>>> 87e2ed47e3d822efd23c1ce5d8d99040420689f7
 import random
 
 # begin programming the game
@@ -117,18 +109,6 @@ def collisionDetect():
 
 
 def mainGame():
-<<<<<<< HEAD
-    for EVENT in pygame.event.get():
-        if(EVENT.Type == KEYDOWN):
-            if(pygame.key.get_pressed()[K_UP]):
-                thread.start_new_thread(jump)
-        elif(EVENT.Type == QUIT()):
-            quit()
-    drawPlayer()
-    thread.start_new_thread(spawn, (initX))
-    thread.start_new_thread(spawn, (initX))
-    collisionDetect()
-=======
     while(True):
         refreshScreen()
         if(pygame.event.get()):
@@ -145,5 +125,4 @@ def mainGame():
             drawPlayer()
         moveBlocks()
         collisionDetect()
->>>>>>> 87e2ed47e3d822efd23c1ce5d8d99040420689f7
     return
