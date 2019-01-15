@@ -1,15 +1,10 @@
 #!/usr/bin/env python3
 # shebang for linux/mac/unix users
-<<<<<<< HEAD
 import sys
 import time
 import pygame
 import threading
 import random
-=======
-
-import sys, time, pygame, threading, random
->>>>>>> 86f0d5c649c1131396bf76c6452cfbe2a502fe72
 
 # begin programming the game
 
@@ -46,9 +41,8 @@ def refreshScreen():
     return
 
 
-def moveBlocks():
+def moveBlocks(x1, x2):
     # you forgot this
-    global block1X, block2X
     # however, this is the wrong way of passing in global variables in python
     # what it should be instead is that we pass in the global variables
     # then, when we call it, we call `block1X = moveBlocks(block1X)`
@@ -56,33 +50,39 @@ def moveBlocks():
     # but, I am a lazy bastard, and hence I put `global block1X, block2X`
     # TODO #1 - FIX THIS LAZY SLOP OF A HACK
     # - ian
-    block1X -= speed
-    block2X -= speed
-    pygame.draw.rect(screen, (0, 0, 0), [block1X, initY, initX + blockW, initY + blockH])
-    pygame.draw.rect(screen, (0, 0, 0), [block2X, initY, initX + blockW, initY + blockH])
-    if(block1X <= -50):
+    x1 -= speed
+    x2 -= speed
+    pygame.draw.rect(screen, (0, 0, 0), [x1, initY, initX + blockW, initY + blockH])
+    pygame.draw.rect(screen, (0, 0, 0), [x2, initY, initX + blockW, initY + blockH])
+    if(x1 <= -50):
         delay = random.randint(minTime, maxTime)
         time.wait(delay)
-        block1X = 900
+        x1 = 900
     if(block2X <= -50):
         delay = random.randint(minTime, maxTime)
         time.wait(delay)
-        block2X = 900
+        x2 = 900
+    return (x1, x2)
 
 
 def drawPlayer():
     pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY + height])
     return
 
+
 exitFlag = 0
 
+
 class jumpThreads(threading.Thread):
+
     def __init__(self, threadID, name):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.name = name
+
     def run(self):
         jump(self.name, 20)
+
 
 def jump(threadName, delay):
     global playerY
@@ -98,7 +98,9 @@ def jump(threadName, delay):
                 threadName.exit()
     return
 
+
 jumpThread = jumpThreads(1, "jumping")
+
 
 def collisionDetect():
     global playerY, touchingGround
@@ -121,7 +123,7 @@ def mainGame():
         if(pygame.event.get()):
             if(pygame.event.EventType == pygame.key.get_pressed()):
                 if(pygame.event.key == pygame.K_UP):
-                    if(jumpThread.isAlive() == False):
+                    if(not jumpThread.isAlive()):
                         jumpThread.start()
                     else:
                         jumpThread.join()
