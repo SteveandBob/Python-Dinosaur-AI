@@ -1,15 +1,22 @@
 #!/usr/bin/env python3
 # shebang for linux/mac/unix users
+<<<<<<< HEAD
 import sys
 import time
 import pygame
 import threading
 import random
+=======
+
+import sys, time, pygame, threading, random
+>>>>>>> 86f0d5c649c1131396bf76c6452cfbe2a502fe72
 
 # begin programming the game
 
 touchingGround = True
-jumpIntervals = [10, 10, 6, 6, 6, 3, 3, 3, 3, 2, 2, 1, -1, -2, -2, -3, -3, -3, -3, -6, -6, -6, -10, -10]
+jumpIntervals = [10, 10, 6, 6, 6, 3, 3, 3, 3, 2, 2, 1]
+for i in range(12):
+    jumpIntervals.append(jumpIntervals[11 - i] * -1)
 
 spawn1 = False
 spawn2 = False
@@ -26,7 +33,7 @@ height = 40
 speed = 5
 screenY = 400
 screenX = 800
-minTime = 50
+minTime = 500
 maxTime = 2000
 delay = 0
 
