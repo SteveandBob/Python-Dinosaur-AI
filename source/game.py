@@ -41,8 +41,9 @@ def refreshScreen():
     return
 
 
-def moveBlocks(x1, x2):
+def moveBlocks():
     # you forgot this
+    global block1X, block2X
     # however, this is the wrong way of passing in global variables in python
     # what it should be instead is that we pass in the global variables
     # then, when we call it, we call `block1X = moveBlocks(block1X)`
@@ -50,19 +51,18 @@ def moveBlocks(x1, x2):
     # but, I am a lazy bastard, and hence I put `global block1X, block2X`
     # TODO #1 - FIX THIS LAZY SLOP OF A HACK
     # - ian
-    x1 -= speed
-    x2 -= speed
-    pygame.draw.rect(screen, (0, 0, 0), [x1, initY, initX + blockW, initY + blockH])
-    pygame.draw.rect(screen, (0, 0, 0), [x2, initY, initX + blockW, initY + blockH])
-    if(x1 <= -50):
+    block1X -= speed
+    block2X -= speed
+    pygame.draw.rect(screen, (0, 0, 0), [block1X, initY, initX + blockW, initY + blockH])
+    pygame.draw.rect(screen, (0, 0, 0), [block2X, initY, initX + blockW, initY + blockH])
+    if(block1X <= -50):
         delay = random.randint(minTime, maxTime)
         time.wait(delay)
-        x1 = 900
+        block1X = 900
     if(block2X <= -50):
         delay = random.randint(minTime, maxTime)
         time.wait(delay)
-        x2 = 900
-    return (x1, x2)
+        block2X = 900
 
 
 def drawPlayer():
