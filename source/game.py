@@ -107,7 +107,7 @@ def collisionDetect():
     # TODO #3 - FIX STATEMENT ABOVE
     # SEE TODO #1
     # - ian
-    if((playerX + width) > (block1X or block2X) and playerY < (initY + blockH) and playerX < (block1X or block2X)):
+    if(((playerX + width) > (block1X or block2X)) and (playerY < (initY + blockH)) and (playerX < (block1X or block2X))):
         pygame.quit()
         sys.exit()
     if(playerY <= 350):
