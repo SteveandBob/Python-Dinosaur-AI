@@ -2,6 +2,7 @@
 # shebang for linux/mac/unix users
 
 import sys
+import ai
 import pygame
 import threading
 import random
@@ -166,6 +167,8 @@ def mainGame():
             sys.exit()
 
     while(True):
+        AI = ai.ai()
+        AI.run()
         refreshScreen()
         for event in pygame.event.get():
             if(event.type == pygame.key.get_pressed()):

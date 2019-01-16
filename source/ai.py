@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
-import sys
-import time
+# shebang for linux/mac/unix users
+
+import random
 import game
+
 
 class ai:
     def __init__(self, id):
         self.ID = id
         self.aiScore = 0
-        self.alive = true
+        self.alive = True
         self.playerSpeed = 0
         self.onGround = 1
         self.blockDist = 0
@@ -23,42 +25,44 @@ class ai:
         self.max1 = 9
         self.max2 = 9
         self.max3 = 9
-        self.hiddenMod1 = random.uniform(min1 ,max1)
-        self.hiddenMod2 = random.uniform(min2, max2)
-        self.hiddenMod3 = random.uniform(min3, max3)
+        self.hiddenMod1 = random.uniform(self.min1, self.max1)
+        self.hiddenMod2 = random.uniform(self.min2, self.max2)
+        self.hiddenMod3 = random.uniform(self.min3, self.max3)
         self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
     def run(self):
+        # TODO: NOTE game.controller.____
+        # fix that by passing through controller
         self.playerSpeed = game.controller.speed
-        if(game.controller.touchingground = true):
+        if(game.controller.touchingground):
             self.onGround = 1
         else:
             self.onGround = 0
         if(game.controller.block1X < game.controller.block2X):
-            self.nextBlockPos = block1X
+            self.nextBlockPos = game.controller.block1X
         else:
-            self.nextBlockPos = block2X
-        self.blockDist = nextBlockPos - #game.player.playerX
+            self.nextBlockPos = game.controller.block2X
+        self.blockDist = self.nextBlockPos  # - game.player.playerX
 
-        #hidden nodes
+        # hidden nodes
         self.modOut1 = self.blockDist + self.playerSpeed + self.onGround
         self.modOut2 = self.blockDist - self.playerSpeed + self.onGround
         self.modOut3 = self.blockDist - self.playerSpeed - self.onGround
 
-        #output layer
+        # output layer
         self.modOut1 = self.modOut1 * self.hiddenMod1
         self.modOut2 = self.modOut2 * self.hiddenMod2
         self.modOut3 = self.modOut3 * self.hiddenMod3
         self.finalOutput = self.modOut1 - self.modOut2 - self.modOut3
-        if(finalOutput < key):
+        if(self.finalOutput < self.key):
             self.finalOutput = 1
         else:
             self.finalOutput = 0
 
     def returnMods(self):
-        for(i = 0, i < 3, ++i):
-            print self.hiddenMods[i]
-        print self.aiScore
+        for i in range(3):
+            print(self.hiddenMods[i])
+        print(self.aiScore)
 
     def checkState(self):
         self.alive = game.player.aliveState
@@ -66,5 +70,3 @@ class ai:
             self.aiScore = game.player.score
             game.exit
             quit()
-        else:
-            continue
