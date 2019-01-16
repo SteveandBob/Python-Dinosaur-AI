@@ -25,7 +25,6 @@ def refreshScreen():
     screen.fill((255, 255, 255))
     return
 
-
 class controller:
     # I have no clue what to name it, I want the instance to be named
     # player, while the class be named controller
@@ -73,9 +72,13 @@ class controller:
     def isGrounded(self):
         return self.touchingGround
 
+    def isAlive(self):
+        return self.aliveState
+    
     def isTouching(self, enemy):
         if (((self.playerX + self.width) > enemy.getXpos()) and ((self.playerX + self.width) < enemy.getXWidth()) and (self.playerY < enemy.getYHeight()) and (self.playerX > enemy.getXpos()) and (self.playerX < enemy.getXWidth())):
             # TODO: Make if statement less cancer
+            self.aliveState = False
             return True
         if (self.playerY <= (screenY - 50)):
             self.playerY = screenY - 50
@@ -93,7 +96,88 @@ class controller:
         # else:
         #     self.touchingGround = False
 
+class ai:
+    def __init__(self, id):
+        self.ID = id
+        self.aiScore = 0
+        self.alive = True
+        self.quit = False
+        self.playerSpeed = 0
+        self.onGround = 1
+        self.blockDist = 0
+        self.nextBlockPos = 0
+        self.modOut1 = 0
+        self.modOut2 = 0
+        self.modOut3 = 0
+        self.finalOutput = 0
+        self.key = 50
+        self.min1 = 5
+        self.min2 = 5
+        self.min3 = 5
+        self.max1 = 9
+        self.max2 = 9
+        self.max3 = 9
+        self.hiddenMod1 = random.uniform(self.min1, self.max1)
+        self.hiddenMod2 = random.uniform(self.min2, self.max2)
+        self.hiddenMod3 = random.uniform(self.min3, self.max3)
+        self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
+    def returnMods(self):
+        for i in range(3):
+            print(self.hiddenMods[i])
+        print(self.aiScore)
+
+    def checkState(self, player):
+        self.alive = player.aliveState
+        if(self.alive == False):
+            self.aiScore = player.score
+            return True
+        else:
+            return False
+            continue
+
+    def run(self, player, threadName):
+        while(self.quit == False):
+            self.playerSpeed = speed
+            if(player.isGrounded):
+                self.onGround = 1
+            else:
+                self.onGround = 0
+            if(block1.blockX < block2.blockX):
+                self.nextBlockPos = block1.blockX
+            else:
+                self.nextBlockPos = block2.blockX
+            self.blockDist = self.nextBlockPos  # - game.player.playerX
+
+            # hidden nodes
+            self.modOut1 = self.blockDist + self.playerSpeed + self.onGround
+            self.modOut2 = self.blockDist - self.playerSpeed + self.onGround
+            self.modOut3 = self.blockDist - self.playerSpeed - self.onGround
+
+            # output layer
+            self.modOut1 = self.modOut1 * self.hiddenMod1
+            self.modOut2 = self.modOut2 * self.hiddenMod2
+            self.modOut3 = self.modOut3 * self.hiddenMod3
+            self.finalOutput = self.modOut1 - self.modOut2 - self.modOut3
+            if(self.finalOutput < self.key):
+                self.finalOutput = 1
+            else:
+                self.finalOutput = 0
+            self.quit = checkState(player)
+            if(self.quit == True):
+                returnMods()
+                quit()
+            else:
+                continue()
+
+class aiThread(threading.Thread):
+    def __init__(self, threadID, threadName):
+        threading.Thread.__init__(self)
+        self.ThreadID = threadID
+        self.ThreadName = threadName
+    def run(self):
+        ai.run(player, "aiThread")
+        
 class enemy:
     # the class is called enemy, the individual instances itself are called block1 and block2
     # so that syntax change isn't huge
@@ -136,6 +220,7 @@ exitFlag = 0
 def mainGame():
 
     player = controller()
+    AI = ai()
 
     block1 = enemy(900)
     block2 = enemy(1400)
@@ -163,10 +248,8 @@ def mainGame():
         if (player.isTouching(block1) or player.isTouching(block2)):
             pygame.quit()
             sys.exit()
-
+        aiThread.start()
     while(True):
-        AI = ai.ai()
-        AI.run()
         refreshScreen()
         for event in pygame.event.get():
             if(pygame.event.EventType == pygame.key.get_pressed()):
