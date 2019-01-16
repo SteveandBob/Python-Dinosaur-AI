@@ -139,6 +139,8 @@ def mainGame():
     block1 = enemy(900)
     block2 = enemy(1400)
 
+    score = 0
+    
     class jumpThreads(threading.Thread):
 
         def __init__(self, threadID, name):
@@ -164,21 +166,20 @@ def mainGame():
             sys.exit()
 
     while(True):
-        ai.ai.run()
         refreshScreen()
         for event in pygame.event.get():
-            if(pygame.event.EventType == pygame.key.get_pressed()):
-                if(pygame.event.key == pygame.K_UP):
+            if(event.type == pygame.key.get_pressed()):
+                if(event.key == pygame.K_UP):
                     if(not jumpThread.isAlive()):
                         jumpThread.start()
                     else:
                         jumpThread.join()
-            elif(pygame.event.EventType == pygame.QUIT):
+            elif(event.type == pygame.QUIT):
                 pygame.quit()
                 sys.exit()
         else:
             updateScreen()
-        moveBlocks()
-        collisionDetect()
-        pygame.display.flip()
+            moveBlocks()
+            collisionDetect()
+            pygame.display.flip()
     return
