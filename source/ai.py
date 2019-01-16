@@ -31,6 +31,8 @@ class ai:
         self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
     def run(self):
+        # TODO: NOTE game.controller.____
+        # fix that by passing through controller
         self.playerSpeed = game.controller.speed
         if(game.controller.touchingground):
             self.onGround = 1
