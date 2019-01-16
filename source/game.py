@@ -165,7 +165,8 @@ def mainGame():
             sys.exit()
 
     while(True):
-        ai.ai.run()
+        AI = ai.ai()
+        AI.run()
         refreshScreen()
         for event in pygame.event.get():
             if(pygame.event.EventType == pygame.key.get_pressed()):
