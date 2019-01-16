@@ -2,6 +2,7 @@
 # shebang for linux/mac/unix users
 
 import sys
+import ai
 import pygame
 import threading
 import random
