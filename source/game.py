@@ -179,4 +179,5 @@ def mainGame():
             updateScreen()
         moveBlocks()
         collisionDetect()
+        pygame.display.flip()
     return

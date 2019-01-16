@@ -19,5 +19,10 @@ The game is made by us and probably has a crap ton of bugs that we will not fix
 simply because we only made the game to fulfill our need for a task for the AI
 to complete/do.
 
+The game in this gitlab.com repository is not a full copy of the Google
+Dinosaur Game, the T-Rex is replaced with a red block and the cactii have been
+replaced with black blocks. No raptors or flying obstacles exist and graphics
+are kept to a bare minimum.
+
 Read the CHANGELOG.md file as it lists a lot of major changes and at which date
 they were completed.
