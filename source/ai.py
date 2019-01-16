@@ -29,12 +29,12 @@ class ai:
         self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
     def run(self):
-        self.playerSpeed = #game.player.speed
-        if(#game.player.touchingground = true):
+        self.playerSpeed = game.controller.speed
+        if(game.controller.touchingground = true):
             self.onGround = 1
         else:
             self.onGround = 0
-        if(#game.player.block1X < game.player.block2X):
+        if(game.controller.block1X < game.controller.block2X):
             self.nextBlockPos = block1X
         else:
             self.nextBlockPos = block2X
