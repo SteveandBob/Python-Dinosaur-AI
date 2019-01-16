@@ -1,8 +1,7 @@
 #!/usr/bin/env python3
 # shebang for linux/mac/unix users
 
-import sys
-import time
+import random
 import game
 
 
@@ -10,7 +9,7 @@ class ai:
     def __init__(self, id):
         self.ID = id
         self.aiScore = 0
-        self.alive = true
+        self.alive = True
         self.playerSpeed = 0
         self.onGround = 1
         self.blockDist = 0
@@ -26,9 +25,9 @@ class ai:
         self.max1 = 9
         self.max2 = 9
         self.max3 = 9
-        self.hiddenMod1 = random.uniform(min1, max1)
-        self.hiddenMod2 = random.uniform(min2, max2)
-        self.hiddenMod3 = random.uniform(min3, max3)
+        self.hiddenMod1 = random.uniform(self.min1, self.max1)
+        self.hiddenMod2 = random.uniform(self.min2, self.max2)
+        self.hiddenMod3 = random.uniform(self.min3, self.max3)
         self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
     def run(self):
@@ -38,9 +37,9 @@ class ai:
         else:
             self.onGround = 0
         if(game.controller.block1X < game.controller.block2X):
-            self.nextBlockPos = block1X
+            self.nextBlockPos = game.controller.block1X
         else:
-            self.nextBlockPos = block2X
+            self.nextBlockPos = game.controller.block2X
         self.blockDist = self.nextBlockPos  # - game.player.playerX
 
         # hidden nodes
@@ -69,5 +68,3 @@ class ai:
             self.aiScore = game.player.score
             game.exit
             quit()
-        else:
-            continue
