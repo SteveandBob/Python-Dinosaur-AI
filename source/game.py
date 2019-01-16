@@ -63,8 +63,7 @@ class controller:
         if(self.touchingGround):
             for i in self.jumpIntervals:
                 self.playerY += i
-                pygame.draw.rect(screen, (255, 0, 0), [self.playerX, self.playerY, self.playerX + self.width, self.playerY + self.height])
-                pygame.time.wait(delay)
+                pygame.time.wait(20)
                 if(exitFlag):
                     threadName.exit()
         return
@@ -136,7 +135,7 @@ class ai:
             return False
             continue
 
-    def run(self, player, threadName):
+    def run(self, player, threadName, block1, block2):
         while(self.quit == False):
             self.playerSpeed = speed
             if(player.isGrounded):
@@ -176,7 +175,7 @@ class aiThread(threading.Thread):
         self.ThreadID = threadID
         self.ThreadName = threadName
     def run(self):
-        ai.run(player, "aiThread")
+        ai.run(player, "aiThread", block1, block2)
         
 class enemy:
     # the class is called enemy, the individual instances itself are called block1 and block2
@@ -220,7 +219,7 @@ exitFlag = 0
 def mainGame():
 
     player = controller()
-    AI = ai()
+    AI = ai(1)
 
     block1 = enemy(900)
     block2 = enemy(1400)
@@ -228,7 +227,6 @@ def mainGame():
     score = 0
     
     class jumpThreads(threading.Thread):
-
         def __init__(self, threadID, name):
             threading.Thread.__init__(self)
             self.threadID = threadID
@@ -250,7 +248,9 @@ def mainGame():
         if (player.isTouching(block1) or player.isTouching(block2)):
             pygame.quit()
             sys.exit()
-        aiThread.start()
+    
+    #aiThread.start()
+
     while(True):
         refreshScreen()
         for event in pygame.event.get():
@@ -263,9 +263,7 @@ def mainGame():
             elif(event.type == pygame.QUIT):
                 pygame.quit()
                 sys.exit()
-        else:
-            updateScreen()
-            moveBlocks()
-            collisionDetect()
-            pygame.display.flip()
+        updateScreen()
+        moveBlocks()
+        collisionDetect()
     return
