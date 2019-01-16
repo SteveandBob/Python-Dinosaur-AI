@@ -3,29 +3,68 @@ import sys
 import time
 import game
 
-#variables
-playerSpeed = 0
-onGround = 1
-blockDist = 0
-nextBlockPos = 0
+class ai:
+    def __init__(self, id):
+        self.ID = id
+        self.aiScore = 0
+        self.alive = true
+        self.playerSpeed = 0
+        self.onGround = 1
+        self.blockDist = 0
+        self.nextBlockPos = 0
+        self.modOut1 = 0
+        self.modOut2 = 0
+        self.modOut3 = 0
+        self.finalOutput = 0
+        self.key = 50
+        self.min1 = 5
+        self.min2 = 5
+        self.min3 = 5
+        self.max1 = 9
+        self.max2 = 9
+        self.max3 = 9
+        self.hiddenMod1 = random.uniform(min1 ,max1)
+        self.hiddenMod2 = random.uniform(min2, max2)
+        self.hiddenMod3 = random.uniform(min3, max3)
+        self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
-#global constants
+    def run(self):
+        self.playerSpeed = #game.player.speed
+        if(#game.player.touchingground = true):
+            self.onGround = 1
+        else:
+            self.onGround = 0
+        if(#game.player.block1X < game.player.block2X):
+            self.nextBlockPos = block1X
+        else:
+            self.nextBlockPos = block2X
+        self.blockDist = nextBlockPos - #game.player.playerX
 
+        #hidden nodes
+        self.modOut1 = self.blockDist + self.playerSpeed + self.onGround
+        self.modOut2 = self.blockDist - self.playerSpeed + self.onGround
+        self.modOut3 = self.blockDist - self.playerSpeed - self.onGround
 
+        #output layer
+        self.modOut1 = self.modOut1 * self.hiddenMod1
+        self.modOut2 = self.modOut2 * self.hiddenMod2
+        self.modOut3 = self.modOut3 * self.hiddenMod3
+        self.finalOutput = self.modOut1 - self.modOut2 - self.modOut3
+        if(finalOutput < key):
+            self.finalOutput = 1
+        else:
+            self.finalOutput = 0
 
-#input layers
-playerSpeed = #game.player.speed
-if(#game.player.touchingground = true):
-    onGround = 1
-else:
-    onGround = 0
-if(#game.player.block1X < block2X):
-    nextBlockPos = block1X
-else:
-    nextBlockPos = block2X
-blockDist = nextBlockPos - #game.player.playerX
+    def returnMods(self):
+        for(i = 0, i < 3, ++i):
+            print self.hiddenMods[i]
+        print self.aiScore
 
-#hidden nodes
-
-
-#output layer
+    def checkState(self):
+        self.alive = game.player.aliveState
+        if(self.alive == 1):
+            self.aiScore = game.player.score
+            game.exit
+            quit()
+        else:
+            continue
