@@ -1,30 +1,14 @@
 #!/usr/bin/env python3
 # shebang for linux/mac/unix users
+
 import sys
-import time
 import pygame
 import threading
 import random
 
 # begin programming the game
-
-touchingGround = True
-jumpIntervals = [10, 10, 6, 6, 6, 3, 3, 3, 3, 2, 2, 1]
-for i in range(12):
-    jumpIntervals.append(jumpIntervals[11 - i] * -1)
-
 spawn1 = False
 spawn2 = False
-playerX = 100
-playerY = 350
-initX = 1000
-initY = 350
-block1X = 900
-block2X = 1400
-blockW = 25
-blockH = 45
-width = 20
-height = 40
 speed = 5
 screenY = 400
 screenX = 800
@@ -41,83 +25,144 @@ def refreshScreen():
     return
 
 
-def moveBlocks():
-    # you forgot this
-    global block1X, block2X
-    # however, this is the wrong way of passing in global variables in python
-    # what it should be instead is that we pass in the global variables
-    # then, when we call it, we call `block1X = moveBlocks(block1X)`
-    # and then call `block2X = moveBlocks(block2X)`
-    # but, I am a lazy bastard, and hence I put `global block1X, block2X`
-    # TODO #1 - FIX THIS LAZY SLOP OF A HACK
-    # - ian
-    block1X -= speed
-    block2X -= speed
-    pygame.draw.rect(screen, (0, 0, 0), [block1X, initY, initX + blockW, initY + blockH])
-    pygame.draw.rect(screen, (0, 0, 0), [block2X, initY, initX + blockW, initY + blockH])
-    if(block1X <= -50):
-        delay = random.randint(minTime, maxTime)
-        time.wait(delay)
-        block1X = 900
-    if(block2X <= -50):
-        delay = random.randint(minTime, maxTime)
-        time.wait(delay)
-        block2X = 900
+class controller:
+    # I have no clue what to name it, I want the instance to be named
+    # player, while the class be named controller
+
+    # player variables:
+
+    # player pos:
+    playerX = 100
+    playerY = 350
+
+    # player dimensions:
+    width = 20
+    height = 40
+
+    # player attributes:
+    touchingGround = True
+
+    # player jump intervals
+    jumpIntervals = [10, 10, 6, 6, 6, 3, 3, 3, 3, 2, 2, 1]
+    for i in range(12):
+        jumpIntervals.append(jumpIntervals[11 - i] * -1)
+
+    def getXpos(self):
+        return self.playerX
+
+    def getXWidth(self):
+        return self.playerX + self.width
+
+    def getYpos(self):
+        return self.playerY
+
+    def draw(self):
+        pygame.draw.rect(screen, (255, 0, 0), [self.playerX, self.playerY, self.playerX + self.width, self.playerY + self.height])
+
+    def jump(self, threadName, delay):
+        if(self.touchingGround):
+            for i in self.jumpIntervals:
+                self.playerY += i
+                pygame.draw.rect(screen, (255, 0, 0), [self.playerX, self.playerY, self.playerX + self.width, self.playerY + self.height])
+                pygame.time.wait(delay)
+                if(exitFlag):
+                    threadName.exit()
+        return
+
+    def isGrounded(self):
+        return self.touchingGround
+
+    def isTouching(self, enemy):
+        if (((self.playerX + self.width) > enemy.getXpos()) and ((self.playerX + self.width) < enemy.getXWidth()) and (self.playerY < enemy.getYHeight()) and (self.playerX > enemy.getXpos()) and (self.playerX < enemy.getXWidth())):
+            # TODO: Make if statement less cancer
+            return True
+        if (self.playerY <= (screenY - 50)):
+            self.playerY = screenY - 50
+            self.touchingGround = True
+        else:
+            self.touchingGround = False
+        return False
+        # if(((self.playerX + self.width) > (block1X or block2X)) and ((self.playerX + self.width) < ((block1X + blockW) or (block2X + blockW))) and (self.playerY < (initY - blockH)) and ((self.playerX > (block1X or block2X))) and (self.playerX < ((block1X + blockW) or (block2X + blockW)))):
+        #     # TODO: a feeble attempt at making this less cancer?
+        #     pygame.quit()
+        #     sys.exit()
+        # if(self.playerY <= 350):
+        #     self.playerY = 350
+        #     self.touchingGround = True
+        # else:
+        #     self.touchingGround = False
 
 
-def drawPlayer():
-    pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY + height])
-    return
+class enemy:
+    # the class is called enemy, the individual instances itself are called block1 and block2
+    # so that syntax change isn't huge
+
+    # x position of block
+    blockX = 0
+
+    # dimensions of block
+    blockW = 25
+    blockH = 45
+
+    # initial spawn position of block
+    initX = 900
+    initY = 350
+
+    def __init__(self, beginpos):
+        self.blockX = beginpos
+
+    def getXpos(self):
+        return self.blockX
+
+    def getXWidth(self):
+        return self.blockX + self.blockW
+
+    def getYHeight(self):
+        return self.initY - self.blockH
+
+    def moveBlock(self):
+        self.blockX -= speed
+        pygame.draw.rect(screen, (0, 0, 0), [self.blockX, self.initY, self.initX + self.blockW, self.initY + self.blockH])
+        if(self.blockX <= -50):
+            delay = random.randint(minTime, maxTime)
+            pygame.time.wait(delay)
+            self.blockX = 900
 
 
 exitFlag = 0
 
 
-class jumpThreads(threading.Thread):
-
-    def __init__(self, threadID, name):
-        threading.Thread.__init__(self)
-        self.threadID = threadID
-        self.name = name
-
-    def run(self):
-        jump(self.name, 20)
-
-
-def jump(threadName, delay):
-    global playerY
-    # TODO #2 - FIX STATEMENT ABOVE
-    # SEE TODO #1
-    # - ian
-    if(touchingGround):
-        for i in jumpIntervals:
-            playerY += i
-            pygame.draw.rect(screen, (255, 0, 0), [playerX, playerY, playerX + width, playerY + height])
-            time.wait(delay)
-            if(exitFlag):
-                threadName.exit()
-    return
-
-
-jumpThread = jumpThreads(1, "jumping")
-
-
-def collisionDetect():
-    global playerY, touchingGround
-    # TODO #3 - FIX STATEMENT ABOVE
-    # SEE TODO #1
-    # - ian
-    if(((playerX + width) > (block1X or block2X)) and (playerY < (initY + blockH)) and (playerX < (block1X or block2X))):
-        pygame.quit()
-        sys.exit()
-    if(playerY <= 350):
-        playerY = 350
-        touchingGround = True
-    else:
-        touchingGround = False
-
-
 def mainGame():
+
+    player = controller()
+
+    block1 = enemy(900)
+    block2 = enemy(1400)
+
+    class jumpThreads(threading.Thread):
+
+        def __init__(self, threadID, name):
+            threading.Thread.__init__(self)
+            self.threadID = threadID
+            self.name = name
+
+        def run(self):
+            player.jump(self.name, 20)
+
+    jumpThread = jumpThreads(1, "jumping")
+
+    def moveBlocks():
+        block1.moveBlock()
+        block2.moveBlock()
+
+    def updateScreen():
+        player.draw()
+
+    def collisionDetect():
+        if (player.isTouching(block1) or player.isTouching(block2)):
+            pygame.quit()
+            sys.exit()
+
     while(True):
         refreshScreen()
         if(pygame.event.get()):
@@ -131,7 +176,7 @@ def mainGame():
                 pygame.quit()
                 sys.exit()
         else:
-            drawPlayer()
+            updateScreen()
         moveBlocks()
         collisionDetect()
     return
