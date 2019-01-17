@@ -258,8 +258,8 @@ def mainGame():
     while(playerState):
         for event in pygame.event.get():
             if(event.type == pygame.KEYDOWN):
-                print('Pressed up')
                 if(event.key == pygame.K_UP):
+                    print('Pressed up')
                     if(not jumpThread.isAlive()):
                         jumpThread.start()
                     else:
