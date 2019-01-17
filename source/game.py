@@ -2,7 +2,7 @@
 # shebang for linux/mac/unix users
 
 import sys
-import ai
+# import ai
 import pygame
 import threading
 import random
@@ -132,14 +132,14 @@ class ai:
 
     def checkState(self, player):
         self.alive = player.aliveState
-        if(self.alive == False):
+        if(not self.alive):
             self.aiScore = player.score
             return True
         else:
             return False
 
     def run(self, player, threadName, block1, block2):
-        while(self.quit == False):
+        while(not self.quit):
             self.playerSpeed = speed
             if(player.isGrounded):
                 self.onGround = 1
@@ -165,9 +165,9 @@ class ai:
                 self.finalOutput = 1
             else:
                 self.finalOutput = 0
-            self.quit = checkState(player)
-            if(self.quit == True):
-                returnMods()
+            self.quit = self.checkState(player)
+            if(self.quit):
+                self.returnMods()
                 quit()
 
 class aiThread(threading.Thread):
@@ -175,9 +175,10 @@ class aiThread(threading.Thread):
         threading.Thread.__init__(self)
         self.ThreadID = threadID
         self.ThreadName = threadName
+
     def run(self):
         ai.run(player, "aiThread", block1, block2)
-        
+
 class enemy:
     # the class is called enemy, the individual instances itself are called block1 and block2
     # so that syntax change isn't huge
