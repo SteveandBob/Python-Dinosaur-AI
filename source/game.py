@@ -34,6 +34,7 @@ class controller:
     # player pos:
     playerX = 100
     playerY = 350
+    aliveState = True
 
     # player dimensions:
     width = 20
@@ -58,6 +59,7 @@ class controller:
 
     def draw(self):
         pygame.draw.rect(screen, (255, 0, 0), [self.playerX, self.playerY, self.playerX + self.width, self.playerY + self.height])
+        return
 
     def jump(self, threadName, delay):
         if(self.touchingGround):
@@ -79,6 +81,8 @@ class controller:
             # TODO: Make if statement less cancer
             self.aliveState = False
             return True
+        else:
+            self.aliveState = True
         if (self.playerY <= (screenY - 50)):
             self.playerY = screenY - 50
             self.touchingGround = True
@@ -133,7 +137,6 @@ class ai:
             return True
         else:
             return False
-            continue
 
     def run(self, player, threadName, block1, block2):
         while(self.quit == False):
@@ -166,8 +169,6 @@ class ai:
             if(self.quit == True):
                 returnMods()
                 quit()
-            else:
-                continue()
 
 class aiThread(threading.Thread):
     def __init__(self, threadID, threadName):
@@ -211,6 +212,7 @@ class enemy:
             delay = random.randint(minTime, maxTime)
             pygame.time.wait(delay)
             self.blockX = 900
+        return
 
 
 exitFlag = 0
@@ -250,8 +252,8 @@ def mainGame():
             sys.exit()
     
     #aiThread.start()
-
-    while(True):
+    playerState = True
+    while(playerState == True):
         refreshScreen()
         for event in pygame.event.get():
             if(event.type == pygame.key.get_pressed()):
@@ -266,4 +268,6 @@ def mainGame():
         updateScreen()
         moveBlocks()
         collisionDetect()
+        playerState = AI.checkState(player)
+        pygame.display.flip()
     return
