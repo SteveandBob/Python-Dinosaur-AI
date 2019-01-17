@@ -227,7 +227,9 @@ def mainGame():
     block2 = enemy(1400)
 
     score = 0
-    
+    scoreIncrementDelay = 100
+    currentIncrementDelay = 0
+
     class jumpThreads(threading.Thread):
         def __init__(self, threadID, name):
             threading.Thread.__init__(self)
@@ -255,7 +257,8 @@ def mainGame():
     playerState = True
     while(playerState == True):
         for event in pygame.event.get():
-            if(event.type == pygame.key.get_pressed()):
+            if(event.type == pygame.KEYDOWN):
+                print('Pressed up')
                 if(event.key == pygame.K_UP):
                     if(not jumpThread.isAlive()):
                         jumpThread.start()
