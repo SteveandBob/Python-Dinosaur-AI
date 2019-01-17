@@ -178,7 +178,7 @@ class aiThread(threading.Thread):
 
     def run(self):
         ai.run(player, "aiThread", block1, block2)
-
+        
 class enemy:
     # the class is called enemy, the individual instances itself are called block1 and block2
     # so that syntax change isn't huge
