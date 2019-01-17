@@ -37,8 +37,8 @@ class controller:
     aliveState = True
 
     # player dimensions:
-    width = 20
-    height = 40
+    width = 40
+    height = 20
 
     # player attributes:
     touchingGround = True
@@ -254,7 +254,6 @@ def mainGame():
     #aiThread.start()
     playerState = True
     while(playerState == True):
-        refreshScreen()
         for event in pygame.event.get():
             if(event.type == pygame.key.get_pressed()):
                 if(event.key == pygame.K_UP):
@@ -270,4 +269,5 @@ def mainGame():
         collisionDetect()
         playerState = AI.checkState(player)
         pygame.display.flip()
+        refreshScreen()
     return
