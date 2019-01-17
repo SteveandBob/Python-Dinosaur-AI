@@ -37,8 +37,8 @@ class controller:
     aliveState = True
 
     # player dimensions:
-    width = 20
-    height = 40
+    width = 40
+    height = 20
 
     # player attributes:
     touchingGround = True
