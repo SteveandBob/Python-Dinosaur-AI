@@ -75,7 +75,7 @@ class controller:
 
     def isAlive(self):
         return self.aliveState
-    
+
     def isTouching(self, enemy):
         if (((self.playerX + self.width) > enemy.getXpos()) and ((self.playerX + self.width) < enemy.getXWidth()) and (self.playerY < enemy.getYHeight()) and (self.playerX > enemy.getXpos()) and (self.playerX < enemy.getXWidth())):
             # TODO: Make if statement less cancer
@@ -250,10 +250,10 @@ def mainGame():
         if (player.isTouching(block1) or player.isTouching(block2)):
             pygame.quit()
             sys.exit()
-    
-    #aiThread.start()
+
+    # aiThread.start()
     playerState = True
-    while(playerState == True):
+    while(playerState):
         for event in pygame.event.get():
             if(event.type == pygame.key.get_pressed()):
                 if(event.key == pygame.K_UP):
