@@ -3,60 +3,91 @@ import pygame
 import sys
 
 pygame.init()
-screen = pygame.display.set_mode((600, 300))
+scoreFont = pygame.font.SysFont('Times New Roman', 14)
+screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
+currentScore = 0
+scoreText = scoreFont.render(currentScore, False, (0, 0, 0))
 
 class enemy:
 
     def __init__(self, beginPos):
         self.xPos = beginPos
         self.height = 30
+        self.speed = 13
         # the position the enemy begins at
         # when this block is spawned determines the position of the enemy
 
     def update(self):
-        self.xPos -= 13
+        self.xPos -= self.speed
         if self.xPos <= 0:
-            self.xPos = 600
+            self.xPos = 1000
         pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
-currentScore = 0
+class scoreThread(threading.Thread):
+    def __init__()
 
 def scoreCounter:
     def __init__(self, threadName):
         self.threadName = threadName
         self.delay = 100
-    def run(self, player):
+    def run(self, player, block1, block2):
         while(player.collisionDetect == False):
             currentScore += 1
             pygame.time.wait(self.delay)
+            screen.blit(scoreText, (0, 0))
             if(currentScore <= 100):
                 self.delay = 100
+                block1.speed = 13
+                block2.speed = 13
             elif(currentScore <= 200):
                 self.delay = 90
+                block1.speed = 14
+                block2.speed = 14
             elif(currentScore <= 300):
                 self.delay = 80
+                block1.speed = 15
+                block2.speed = 15
             elif(currentScore <= 400):
                 self.delay = 70
+                block1.speed = 16
+                block2.speed = 16
             elif(currentScore <= 500):
                 self.delay = 60
+                block1.speed = 17
+                block2.speed = 17
             elif(currentScore <= 600):
                 self.delay = 50
+                block1.speed = 18
+                block2.speed = 18
             elif(currentScore <= 700):
                 self.delay = 40
+                block1.speed = 19
+                block2.speed = 19
             elif(currentScore <= 800):
                 self.delay = 30
+                block1.speed = 20
+                block2.speed = 20
             elif(currentScore <= 900):
                 self.delay = 20
+                block1.speed = 21
+                block2.speed = 21
             elif(currentScore <= 1000):
                 self.delay = 10
+                block1.speed = 22
+                block2.speed = 22
             elif(currentScore > 1500):
                 self.delay = 5
+                block1.speed = 25
+                block2.speed = 25
             elif(currentScore > 2500):
                 self.delay = 1
+                block1.speed = 30
+                block2.speed = 30
+
+score = scoreCounter(scoreThread)
 
 class controller:
-
     def __init__(self):
         self.yPos = groundHeight
         self.xPos = 50
@@ -103,8 +134,8 @@ class controller:
 
 def main():
     done = False
-    block1 = enemy(600)
-    block2 = enemy(900)
+    block1 = enemy(1000)
+    block2 = enemy(1500)
     blocks = [block1, block2]
     player = controller()
     while not done:
