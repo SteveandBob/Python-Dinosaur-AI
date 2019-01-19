@@ -20,6 +20,41 @@ class enemy:
             self.xPos = 600
         pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
+currentScore = 0
+
+def scoreCounter:
+    def __init__(self, threadName):
+        self.threadName = threadName
+        self.delay = 100
+    def run(self, player):
+        while(player.collisionDetect == False):
+            currentScore += 1
+            pygame.time.wait(self.delay)
+            if(currentScore <= 100):
+                self.delay = 100
+            elif(currentScore <= 200):
+                self.delay = 90
+            elif(currentScore <= 300):
+                self.delay = 80
+            elif(currentScore <= 400):
+                self.delay = 70
+            elif(currentScore <= 500):
+                self.delay = 60
+            elif(currentScore <= 600):
+                self.delay = 50
+            elif(currentScore <= 700):
+                self.delay = 40
+            elif(currentScore <= 800):
+                self.delay = 30
+            elif(currentScore <= 900):
+                self.delay = 20
+            elif(currentScore <= 1000):
+                self.delay = 10
+            elif(currentScore > 1500):
+                self.delay = 5
+            elif(currentScore > 2500):
+                self.delay = 1
+
 class controller:
 
     def __init__(self):
