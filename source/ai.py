@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 # shebang for linux/mac/unix users
 
+import time
+import sys
 import random
-import game
 
 class ai:
     def __init__(self, id):
