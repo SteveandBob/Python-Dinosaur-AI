@@ -1,13 +1,14 @@
 #!/usr/bin/env python3
 import pygame
 import sys
+import threading
 
 pygame.init()
 scoreFont = pygame.font.SysFont('Times New Roman', 14)
 screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
 currentScore = 0
-scoreText = scoreFont.render(currentScore, False, (0, 0, 0))
+scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
 
 class enemy:
 
@@ -36,7 +37,7 @@ def scoreCounter(self, player, block1, block2):
     while(not player.collisionDetect):
         currentScore += 1
         pygame.time.wait(self.delay)
-        screen.blit(scoreText, (0, 0))
+        screen.blit(str(scoreText), (0, 0))
         if(currentScore <= 100):
             self.delay = 100
             block1.speed = 13
@@ -69,7 +70,7 @@ def scoreCounter(self, player, block1, block2):
             self.delay = 30
             block1.speed = 20
             block2.speed = 20
-         elif(currentScore <= 900):
+        elif(currentScore <= 900):
             self.delay = 20
             block1.speed = 21
             block2.speed = 21
@@ -102,7 +103,7 @@ class controller:
         # jump is updated in the update() function
         if self.yPos == 200 and self.grounded:
             self.grounded = False
-            self.jumpIncrement = 20
+            self.jumpIncrement = 15
 
     def isTouching(self, enemy):
         # TODO: noah you said that when sprites are added pygame can calcuate collisions
@@ -128,10 +129,11 @@ class controller:
         if self.yPos >= 200:
             self.grounded = True
             self.yPos = 200
+        pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
         if self.collisionDetect(blocklist):
             pygame.quit()
             sys.exit()
-        pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+        
 
 def main():
     done = False
@@ -151,7 +153,7 @@ def main():
         for i in blocks:
             i.update()
         player.update(blocks)
-
+        screen.blit(scoreText, (0, 0))
         pygame.display.flip()
         # this updates graphics, pygame is buffered and switches around buffers
         pygame.time.wait(50)
