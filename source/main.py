@@ -25,14 +25,16 @@ class enemy:
         pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
 class scoreThread(threading.Thread):
-    def __init__()
+    def __init__(self):
 
-def scoreCounter:
+class scoreCounter:
+
     def __init__(self, threadName):
         self.threadName = threadName
         self.delay = 100
+
     def run(self, player, block1, block2):
-        while(player.collisionDetect == False):
+        while(not player.collisionDetect):
             currentScore += 1
             pygame.time.wait(self.delay)
             screen.blit(scoreText, (0, 0))
