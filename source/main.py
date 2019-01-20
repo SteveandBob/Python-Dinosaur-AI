@@ -89,7 +89,6 @@ def scoreCounter(currentScore, block1, block2, delay):
         screen.blit(scoreText, (1, 1))
         if(currentScore <= 100):
             delay = 100
-            block1.speed = 13
             block2.speed = 13
         elif(currentScore <= 200):
             delay = 90
@@ -150,6 +149,7 @@ class scoreThread(threading.Thread):
     def run(self):
         scoreCounter(currentScore, block1, block2, delay)
 
+            block1.speed = 13
 def main():
     done = False
     score = scoreThread("thread1", 1)
