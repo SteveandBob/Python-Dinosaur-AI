@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import pygame
 import sys
+import os
 
 pygame.init()
 screen = pygame.display.set_mode((600, 300))
@@ -10,21 +11,30 @@ class enemy:
 
     def __init__(self, beginPos):
         self.xPos = beginPos
-        self.height = 30
+        self.cacti = pygame.image.load("cacti.jpg")
+        self.cactiRect = self.cacti.get_rect()
+        self.height = self.cactiRect.bottom - self.cactiRect.top
+        self.cactiRect = self.cactiRect.move([beginPos, groundHeight])
         # the position the enemy begins at
         # when this block is spawned determines the position of the enemy
 
     def update(self):
         self.xPos -= 13
+        self.cactiRect = self.cactiRect.move([-13, 0])
         if self.xPos <= 0:
+            self.cactiRect = self.cactiRect.move([600 - self.xPos, 0])
             self.xPos = 600
-        pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
+        screen.blit(self.cacti, self.cactiRect)
+        #pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
 class controller:
 
     def __init__(self):
         self.yPos = groundHeight
         self.xPos = 50
+        self.dino = pygame.image.load("dinosaur.jpg")
+        self.dinoRect = self.dino.get_rect()
+        self.dinoRect = self.dinoRect.move([50, groundHeight])
         self.width = 45
         self.height = 70
         self.grounded = True
@@ -38,10 +48,9 @@ class controller:
             self.jumpIncrement = 20
 
     def isTouching(self, enemy):
-        # TODO: noah you said that when sprites are added pygame can calcuate collisions
+        # TODO: noah you said that when cactis are added pygame can calcuate collisions
         # pls implement that here lol thnx
-        if enemy.xPos > self.xPos and enemy.xPos <= (self.xPos + self.width - 5):
-            if (self.yPos + self.height) >= (enemy.height + groundHeight):
+        if enemy.cactiRect.top <= self.dinoRect.bottom and enemy.cactiRect.left <= self.dinoRect.right:
                 print("true")
                 return True
         return False
@@ -57,14 +66,17 @@ class controller:
         # also handles jump after it has been initiated
         if not self.grounded:
             self.yPos -= self.jumpIncrement
+            self.dinoRect = self.dinoRect.move([0, -self.jumpIncrement])
             self.jumpIncrement -= 2
         if self.yPos >= 200:
             self.grounded = True
+            self.dinoRect.move([0, 200 - self.yPos])
             self.yPos = 200
         if self.collisionDetect(blocklist):
             pygame.quit()
             sys.exit()
-        pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+        screen.blit(self.dino, self.dinoRect)
+        #pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
 def main():
     done = False
@@ -84,7 +96,6 @@ def main():
         for i in blocks:
             i.update()
         player.update(blocks)
-
         pygame.display.flip()
         # this updates graphics, pygame is buffered and switches around buffers
         pygame.time.wait(50)
