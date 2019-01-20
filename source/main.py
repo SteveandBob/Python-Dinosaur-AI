@@ -14,7 +14,7 @@ class enemy:
 
     def __init__(self, beginPos):
         self.xPos = beginPos
-        self.cacti = pygame.image.load("cacti.jpg")
+        self.cacti = pygame.image.load("./cacti.jpg")
         self.cactiRect = self.cacti.get_rect()
         self.height = self.cactiRect.bottom - self.cactiRect.top
         self.cactiRect = self.cactiRect.move([beginPos, groundHeight])
@@ -98,7 +98,7 @@ class controller:
     def __init__(self):
         self.yPos = groundHeight
         self.xPos = 50
-        self.dino = pygame.image.load("dinosaur.jpg")
+        self.dino = pygame.image.load("./dinosaur.jpg")
         self.dinoRect = self.dino.get_rect()
         self.dinoRect = self.dinoRect.move([50, groundHeight])
         self.width = 45
