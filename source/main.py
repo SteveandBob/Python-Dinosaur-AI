@@ -14,7 +14,7 @@ class enemy:
 
     def __init__(self, beginPos):
         self.xPos = beginPos
-        self.cacti = pygame.image.load("./cacti.jpg")
+        self.cacti = pygame.image.load("./cacti.png")
         self.cactiRect = self.cacti.get_rect()
         self.height = self.cactiRect.bottom - self.cactiRect.top
         self.cactiRect = self.cactiRect.move([beginPos, groundHeight])
@@ -34,7 +34,7 @@ class controller:
     def __init__(self):
         self.yPos = groundHeight
         self.xPos = 50
-        self.dino = pygame.image.load("./dinosaur.jpg")
+        self.dino = pygame.image.load("./dinosaur.png")
         self.dinoRect = self.dino.get_rect()
         self.dinoRect = self.dinoRect.move([50, groundHeight])
         self.width = 45
@@ -74,7 +74,7 @@ class controller:
             self.grounded = True
             self.dinoRect.move([0, 200 - self.yPos])
             self.yPos = 200
-        pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+        # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
         if self.collisionDetect(blocklist):
             pygame.quit()
             sys.exit()
@@ -148,8 +148,7 @@ class scoreThread(threading.Thread):
         self.ID = ID
     def run(self):
         scoreCounter(currentScore, block1, block2, delay)
-
-            block1.speed = 13
+        block1.speed = 13
 def main():
     done = False
     score = scoreThread("thread1", 1)
