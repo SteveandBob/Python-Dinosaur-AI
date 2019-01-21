@@ -84,3 +84,5 @@ class aiThread(threading.Thread):
 
     def run(self):
         ai.run(player, "aiThread", block1, block2)
+
+def improveNodes():
