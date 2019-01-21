@@ -11,7 +11,6 @@ currentScore = 0
 delay = 100
 
 class enemy:
-
     def __init__(self, beginPos):
         self.xPos = beginPos
         self.cacti = pygame.image.load("./cacti.png")
@@ -47,7 +46,7 @@ class controller:
         # jump is updated in the update() function
         if self.yPos == 200 and self.grounded:
             self.grounded = False
-            self.jumpIncrement = 19
+            self.jumpIncrement = 20
 
     def isTouching(self, enemy):
         # TODO: noah you said that when cactis are added pygame can calcuate collisions
@@ -81,59 +80,59 @@ class controller:
         screen.blit(self.dino, self.dinoRect)
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
-def scoreCounter(currentScore, block1, block2, delay):
+def scoreCounter(block1, block2, delay):
+    global currentScore
     while(True):
         # error is in this part: "Text has zero width"
         currentScore += 1
-        scoreText = scoreFont.render("Score {0}".format(currentScore), 1, (0, 0, 0))
-        screen.blit(scoreText, (1, 1))
         if(currentScore <= 100):
             delay = 100
-            block2.speed = 13
+            block1.speed = 1
+            block2.speed = 1
         elif(currentScore <= 200):
             delay = 90
-            block1.speed = 14
-            block2.speed = 14
+            block1.speed = 2
+            block2.speed = 2
         elif(currentScore <= 300):
             delay = 80
-            block1.speed = 15
-            block2.speed = 15
+            block1.speed = 3
+            block2.speed = 3
         elif(currentScore <= 400):
             delay = 70
-            block1.speed = 16
-            block2.speed = 16
+            block1.speed = 4
+            block2.speed = 4
         elif(currentScore <= 500):
             delay = 60
-            block1.speed = 17
-            block2.speed = 17
+            block1.speed = 5
+            block2.speed = 5
         elif(currentScore <= 600):
             delay = 50
-            block1.speed = 18
-            block2.speed = 18
+            block1.speed = 6
+            block2.speed = 6
         elif(currentScore <= 700):
             delay = 40
-            block1.speed = 19
-            block2.speed = 19
+            block1.speed = 7
+            block2.speed = 7
         elif(currentScore <= 800):
             delay = 30
-            block1.speed = 20
-            block2.speed = 20
+            block1.speed = 8
+            block2.speed = 8
         elif(currentScore <= 900):
             delay = 20
-            block1.speed = 21
-            block2.speed = 21
+            block1.speed = 9
+            block2.speed = 9
         elif(currentScore <= 1000):
             delay = 10
-            block1.speed = 22
-            block2.speed = 22
+            block1.speed = 10
+            block2.speed = 10
         elif(currentScore > 1500):
             delay = 5
-            block1.speed = 25
-            block2.speed = 25
+            block1.speed = 13
+            block2.speed = 13
         elif(currentScore > 2500):
             delay = 1
-            block1.speed = 30
-            block2.speed = 30
+            block1.speed = 15
+            block2.speed = 15
         pygame.time.wait(delay)
 
 
@@ -149,7 +148,8 @@ class scoreThread(threading.Thread):
         self.ID = ID
 
     def run(self):
-        scoreCounter(currentScore, block1, block2, delay)
+        scoreCounter(block1, block2, delay)
+
 def main():
     done = False
     score = scoreThread("thread1", 1)
@@ -162,15 +162,16 @@ def main():
                 continue
             if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 player.jump()
-
         for i in blocks:
             i.update()
         player.update(blocks)
+        scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
+        screen.blit(scoreText, (1, 1))
+        print (currentScore)
         pygame.display.flip()
         # this updates graphics, pygame is buffered and switches around buffers
-        pygame.time.wait(50)
-        # this limits game to 25 updates/sec
-
+        pygame.time.wait(25)
+        # this limits game to 50 updates/sec
 
 if __name__ == "__main__":
     main()
