@@ -15,9 +15,8 @@ input layers, 3 hidden nodes, and 1 output layer.
 The AI was designed to play and achieve the highest score possible on Google's
 dinosaur game that is available on Google Chrome when their is no internet.
 
-The game is made by us and probably has a crap ton of bugs that we will not fix
-simply because we only made the game to fulfill our need for a task for the AI
-to complete/do.
+The game is made by us and isnot very well made. We simply needed a task for our
+first machine-learning AI to learn to play.
 
 The game in this gitlab.com repository is not a full copy of the Google
 Dinosaur Game. No raptors or flying obstacles exist and graphics
