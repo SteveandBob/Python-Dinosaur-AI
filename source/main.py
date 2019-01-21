@@ -148,7 +148,6 @@ class scoreThread(threading.Thread):
         self.ID = ID
     def run(self):
         scoreCounter(currentScore, block1, block2, delay)
-        block1.speed = 13
 def main():
     done = False
     score = scoreThread("thread1", 1)
