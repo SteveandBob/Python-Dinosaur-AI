@@ -28,7 +28,7 @@ class enemy:
             self.cactiRect = self.cactiRect.move([1000 - self.xPos, 0])
             self.xPos = 1000
         screen.blit(self.cacti, self.cactiRect)
-        #pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
+        # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
 class controller:
     def __init__(self):
@@ -79,11 +79,11 @@ class controller:
             pygame.quit()
             sys.exit()
         screen.blit(self.dino, self.dinoRect)
-        #pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+        # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
 def scoreCounter(currentScore, block1, block2, delay):
     while(True):
-        #error is in this part: "Text has zero width"
+        # error is in this part: "Text has zero width"
         currentScore += 1
         scoreText = scoreFont.render("Score {0}".format(currentScore), 1, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
@@ -136,6 +136,7 @@ def scoreCounter(currentScore, block1, block2, delay):
             block2.speed = 30
         pygame.time.wait(delay)
 
+
 block1 = enemy(1000)
 block2 = enemy(1500)
 blocks = [block1, block2]
@@ -146,6 +147,7 @@ class scoreThread(threading.Thread):
         threading.Thread.__init__(self)
         self.Name = Name
         self.ID = ID
+
     def run(self):
         scoreCounter(currentScore, block1, block2, delay)
 def main():
