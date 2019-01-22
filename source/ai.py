@@ -44,7 +44,7 @@ class ai:
             return False
 
     def run(self, player, threadName, block1, block2):
-        while(self.quit = False):
+        while(self.quit == False):
             self.playerSpeed = speed
             if(player.grounded):
                 self.onGround = 1
@@ -88,6 +88,9 @@ def improveNodes(ai):
     previousMods = ai.returnMods()
 
 class learningModule():
-    def __init__(self):
-        
+    def __init__(self, oldMod):
+        self.oldMod = [None, None, None]
     def run(self):
+        for i in range(3):
+            self.oldMod[i] = oldMod[i]
+        
