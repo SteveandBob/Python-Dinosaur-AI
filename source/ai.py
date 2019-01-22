@@ -4,11 +4,12 @@
 import time
 import sys
 import random
+import builtins
 
 class ai:
     def __init__(self, id):
         self.ID = id
-        self.aiScore = 0
+        self.aiScore = builtins.score
         self.alive = True
         self.quit = False
         self.playerSpeed = 0
@@ -32,35 +33,33 @@ class ai:
         self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
 
     def returnMods(self):
-        for i in range(3):
-            print(self.hiddenMods[i])
-        print(self.aiScore)
+        return self.hiddenMods
 
     def checkState(self, player):
-        self.alive = player.aliveState
-        if(not self.alive):
+        self.alive = player.collisionDetect
+        if(self.alive == True):
             self.aiScore = player.score
             return True
         else:
             return False
 
     def run(self, player, threadName, block1, block2):
-        while(not self.quit):
+        while(self.quit = False):
             self.playerSpeed = speed
-            if(player.isGrounded):
+            if(player.grounded):
                 self.onGround = 1
             else:
                 self.onGround = 0
-            if(block1.blockX < block2.blockX):
-                self.nextBlockPos = block1.blockX
+            if(block1.xPos < block2.xPos):
+                self.nextBlockPos = block1.xPos
             else:
-                self.nextBlockPos = block2.blockX
-            self.blockDist = self.nextBlockPos  # - game.player.playerX
+                self.nextBlockPos = block2.xPos
+            self.blockDist = self.nextBlockPos - player.dinoRect.right
 
             # hidden nodes
-            self.modOut1 = self.blockDist + self.playerSpeed + self.onGround
-            self.modOut2 = self.blockDist - self.playerSpeed + self.onGround
-            self.modOut3 = self.blockDist - self.playerSpeed - self.onGround
+            self.modOut1 = self.blockDist * self.playerSpeed + self.onGround
+            self.modOut2 = self.blockDist + self.playerSpeed - self.onGround
+            self.modOut3 = self.blockDist - self.playerSpeed + self.onGround
 
             # output layer
             self.modOut1 = self.modOut1 * self.hiddenMod1
@@ -82,11 +81,12 @@ class aiThread(threading.Thread):
         self.ThreadID = threadID
         self.ThreadName = threadName
 
-    def run(self):
+    def run(self, ai):
         ai.run(player, "aiThread", block1, block2)
 
-def improveNodes():
-    
+def improveNodes(ai):
+    previousMods = ai.returnMods()
+
 class learningModule():
     def __init__(self):
         
