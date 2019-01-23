@@ -132,7 +132,7 @@ class ai:
 
     def checkState(self, player):
         self.alive = player.collisionDetect
-        if(self.alive == True):
+        if self.alive:
             self.aiScore = player.score
             return True
         else:
@@ -151,15 +151,15 @@ class ai:
         self.blockDist = self.nextBlockPos - player.dinoRect.right
 
         # hidden nodes
-        self.modOut1 = self.blockDist * self.playerSpeed + self.onGround
-        self.modOut2 = self.blockDist + self.playerSpeed - self.onGround
-        self.modOut3 = self.blockDist - self.playerSpeed + self.onGround
+        self.modOut1 = self.blockDist * self.playerSpeed * self.onGround
+        self.modOut2 = self.blockDist * self.playerSpeed * self.onGround
+        self.modOut3 = self.blockDist * self.playerSpeed * self.onGround
 
         # output layer
         self.modOut1 = self.modOut1 * self.hiddenMod1
         self.modOut2 = self.modOut2 * self.hiddenMod2
         self.modOut3 = self.modOut3 * self.hiddenMod3
-        self.finalOutput = self.modOut1 - self.modOut2 - self.modOut3
+        self.finalOutput = self.modOut1 + self.modOut2 + self.modOut3
         if(self.finalOutput < self.key):
             self.finalOutput = 1
         else:
@@ -168,11 +168,14 @@ class ai:
 class learningModule():
     def __init__(self, oldMod):
         self.oldMod = [None, None, None]
+
     def run(self):
         for i in range(3):
             self.oldMod[i] = oldMod[i]
+
     def improveNodes(ai):
         previousMods = ai.returnMods()
+
 
 block1 = enemy(1000)
 block2 = enemy(1500)
@@ -195,12 +198,12 @@ def main():
     score.start()
     while not done:
         screen.fill((245, 245, 245))
-        #for event in pygame.event.get():
-            #if event.type == pygame.QUIT:
-                #done = True
-                #continue
-            #if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                #player.jump()
+        # for event in pygame.event.get():
+        #   if event.type == pygame.QUIT:
+        #       done = True
+        #       continue
+        #   if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+        #        player.jump()
         ai.run(player, block1, block2)
         if(ai.finalOutput == 1):
             player.jump()
@@ -214,6 +217,7 @@ def main():
         # this updates graphics, pygame is buffered and switches around buffers
         pygame.time.wait(40)
         # this limits game to ?? updates/sec
+
 
 if __name__ == "__main__":
     main()
