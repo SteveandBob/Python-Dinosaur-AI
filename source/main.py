@@ -20,7 +20,7 @@ class enemy:
         self.height = self.cactiRect.bottom - self.cactiRect.top
         self.cactiRect = self.cactiRect.move([beginPos, groundHeight])
         self.speed = 10
-        self.minRandDist = 0
+        self.minRandDist = 40
         self.maxRandDist = 150
         # the position the enemy begins at
         # when this block is spawned determines the position of the enemy
