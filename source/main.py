@@ -12,6 +12,7 @@ currentScore = 0
 delay = 100
 
 class enemy:
+    global currentScore
     def __init__(self, beginPos):
         self.xPos = beginPos
         self.cacti = pygame.image.load("./cacti.png")
@@ -19,6 +20,8 @@ class enemy:
         self.height = self.cactiRect.bottom - self.cactiRect.top
         self.cactiRect = self.cactiRect.move([beginPos, groundHeight])
         self.speed = 10
+        self.minRandDist = 0
+        self.maxRandDist = 150
         # the position the enemy begins at
         # when this block is spawned determines the position of the enemy
 
@@ -26,9 +29,13 @@ class enemy:
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
-            self.cactiRect = self.cactiRect.move([1000 - self.xPos, 0])
-            self.xPos = 1000
+            self.randomDist = random.randint(0, 150)
+            self.cactiRect = self.cactiRect.move([(1000 + self.randomDist) - self.xPos, 0])
+            self.xPos = 1000 + self.randomDist
         screen.blit(self.cacti, self.cactiRect)
+        if currentScore % 100 == 0:
+            self.minRandDist += 20
+            self.maxRandDist += 20
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
 class controller:
@@ -64,7 +71,7 @@ class controller:
                 return True
         return False
 
-    def update(self, blocklist):
+    def update(self, blocklist, ai):
         # updates the player and draws it
         # also handles jump after it has been initiated
         if not self.grounded:
@@ -77,16 +84,18 @@ class controller:
             self.yPos = 200
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
         if self.collisionDetect(blocklist):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             pygame.quit()
             sys.exit()
         screen.blit(self.dino, self.dinoRect)
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
-def scoreCounter(block1, block2, delay):
+def scoreCounter(block1, block2, block3, delay):
     global currentScore
     delay = 100
     block1.speed = 10
     block2.speed = 10
+    block3.speed = 10
     while(True):
         # error is in this part: "Text has zero width"
         currentScore += 1
@@ -95,6 +104,7 @@ def scoreCounter(block1, block2, delay):
                 delay -= 10
                 block1.speed += 1
                 block2.speed += 1
+                block3.speed += 1
         else:
             if currentScore % 100 == 0:
                 delay -= 5
@@ -116,19 +126,19 @@ class ai:
         self.modOut3 = 0
         self.finalOutput = 0
         self.key = 100
-        self.min1 = 5
+        self.min1 = 1
         self.min2 = 5
         self.min3 = 5
-        self.max1 = 9
+        self.max1 = 3
         self.max2 = 9
         self.max3 = 9
-        self.hiddenMod1 = random.uniform(self.min1, self.max1)
-        self.hiddenMod2 = random.uniform(self.min2, self.max2)
-        self.hiddenMod3 = random.uniform(self.min3, self.max3)
-        self.hiddenMods = [self.hiddenMod1, self.hiddenMod2, self.hiddenMod3]
+        self.weight1 = random.uniform(self.min1, self.max1)
+        self.weight2 = random.uniform(self.min2, self.max2)
+        self.weight3 = random.uniform(self.min3, self.max3)
+        self.weights = [self.weight1, self.weight2, self.weight3]
 
-    def returnMods(self):
-        return self.hiddenMods
+    def returnWeights(self):
+        return self.weights
 
     def checkState(self, player):
         self.alive = player.collisionDetect
@@ -138,47 +148,46 @@ class ai:
         else:
             return False
 
-    def run(self, player, block1, block2):
+    def run(self, player, block1, block2, block3):
         self.playerSpeed = block1.speed
         if(player.grounded):
             self.onGround = 1
         else:
             self.onGround = 0
-        if(block1.xPos < block2.xPos):
+        if(block1.xPos < block2.xPos and block1.xPos < block3.xPos):
             self.nextBlockPos = block1.xPos
-        else:
+        elif(block2.xPos < block1.xPos and block2.xPos < block3.xPos):
             self.nextBlockPos = block2.xPos
+        else:
+            self.nextBlockPos = block3.xPos
         self.blockDist = self.nextBlockPos - player.dinoRect.right
 
         # hidden nodes
-        self.modOut1 = self.blockDist * self.playerSpeed + self.onGround
-        self.modOut2 = self.blockDist + self.playerSpeed - self.onGround
-        self.modOut3 = self.blockDist - self.playerSpeed + self.onGround
+        self.modOut1 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
+        self.modOut2 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) - (self.onGround * self.weight3)
+        self.modOut3 = (self.blockDist * self.weight1) - (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
 
-        # output layer
-        self.modOut1 = self.modOut1 * self.hiddenMod1
-        self.modOut2 = self.modOut2 * self.hiddenMod2
-        self.modOut3 = self.modOut3 * self.hiddenMod3
-        self.finalOutput = self.modOut1 - self.modOut2 - self.modOut3
+        #output layer
+        self.finalOutput = self.modOut1 - self.modOut2 + self.modOut3
         if(self.finalOutput < self.key):
             self.finalOutput = 1
         else:
             self.finalOutput = 0
 
 class learningModule():
-    def __init__(self, oldMod):
+    def __init__(self):
         self.oldMod = [None, None, None]
-    def run(self):
-        for i in range(3):
-            self.oldMod[i] = oldMod[i]
-    def improveNodes(ai):
-        previousMods = ai.returnMods()
+    def improveNodes(self, ai, weight1, weight2, weight3):
+        self.openFile = open("weightValues.txt","a+")
+        self.openFile.write(str(weight1) + " " + str(weight2) + " " + str(weight3))
 
 block1 = enemy(1000)
-block2 = enemy(1500)
-blocks = [block1, block2]
+block2 = enemy(1333)
+block3 = enemy(1666)
+blocks = [block1, block2, block3]
 player = controller()
 ai = ai()
+learningModule = learningModule()
 
 class scoreThread(threading.Thread):
     def __init__(self, Name, ID):
@@ -187,7 +196,7 @@ class scoreThread(threading.Thread):
         self.ID = ID
 
     def run(self):
-        scoreCounter(block1, block2, delay)
+        scoreCounter(block1, block2, block3, delay)
 
 def main():
     done = False
@@ -201,12 +210,12 @@ def main():
                 #continue
             #if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
                 #player.jump()
-        ai.run(player, block1, block2)
+        ai.run(player, block1, block2, block3)
         if(ai.finalOutput == 1):
             player.jump()
         for i in blocks:
             i.update()
-        player.update(blocks)
+        player.update(blocks, ai)
         scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
         print(str(currentScore) + " " + str(blocks[0].speed) + " " + str(blocks[1].speed))
