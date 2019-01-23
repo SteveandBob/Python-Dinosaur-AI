@@ -142,7 +142,7 @@ class ai:
 
     def checkState(self, player):
         self.alive = player.collisionDetect
-        if(self.alive == True):
+        if self.alive:
             self.aiScore = player.score
             return True
         else:
@@ -180,6 +180,7 @@ class learningModule():
     def improveNodes(self, ai, weight1, weight2, weight3):
         self.openFile = open("weightValues.txt","a+")
         self.openFile.write(str(weight1) + " " + str(weight2) + " " + str(weight3))
+
 
 block1 = enemy(1000)
 block2 = enemy(1333)
@@ -223,6 +224,7 @@ def main():
         # this updates graphics, pygame is buffered and switches around buffers
         pygame.time.wait(40)
         # this limits game to ?? updates/sec
+
 
 if __name__ == "__main__":
     main()
