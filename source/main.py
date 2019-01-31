@@ -61,8 +61,6 @@ class controller:
             self.jumpIncrement = 20
 
     def isTouching(self, enemy):
-        # TODO: noah you said that when cactis are added pygame can calcuate collisions
-        # pls implement that here lol thnx
         if enemy.cactiRect.top <= self.dinoRect.bottom - 20 and enemy.cactiRect.left <= self.dinoRect.right - 12:
                 print("true")
                 return True
