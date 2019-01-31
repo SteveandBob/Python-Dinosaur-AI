@@ -29,7 +29,10 @@ class enemy:
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
-            self.randomDist = random.randint(0, 150)
+            self.randomDist = random.randint((self.speed * 10) + 50, (self.speed * 10) + 100)
+            # TODO: NOTICE THE + 50 AND THE + 100 IN THE ABOVE LINE
+            # WE CAN SHORTEN IT AS AI GETS GOOD
+            # basically, the above line makes sure the dinosaur always has enough space to make the jump
             self.cactiRect = self.cactiRect.move([(1000 + self.randomDist) - self.xPos, 0])
             self.xPos = 1000 + self.randomDist
         screen.blit(self.cacti, self.cactiRect)
@@ -182,8 +185,8 @@ class learningModule():
         self.openFile.write(str(weight1) + " " + str(weight2) + " " + str(weight3))
 
 block1 = enemy(1000)
-block2 = enemy(1333)
-block3 = enemy(1666)
+block2 = enemy(1400)
+block3 = enemy(1800)
 blocks = [block1, block2, block3]
 player = controller()
 ai = ai()
@@ -204,12 +207,12 @@ def main():
     score.start()
     while not done:
         screen.fill((245, 245, 245))
-        #for event in pygame.event.get():
-            #if event.type == pygame.QUIT:
-                #done = True
-                #continue
-            #if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                #player.jump()
+        # for event in pygame.event.get():
+        #     if event.type == pygame.QUIT:
+        #         done = True
+        #         continue
+        #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+        #         player.jump()
         ai.run(player, block1, block2, block3)
         if(ai.finalOutput == 1):
             player.jump()
