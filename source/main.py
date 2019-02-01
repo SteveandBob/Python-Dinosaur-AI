@@ -43,7 +43,6 @@ class enemy:
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
 class controller:
-    global exitFlag
     def __init__(self):
         self.yPos = groundHeight
         self.xPos = 50
@@ -69,6 +68,7 @@ class controller:
         return False
 
     def collisionDetect(self, enemy):
+        global exitFlag
         for i in enemy:
             if self.isTouching(i):
                 exitFlag = True
