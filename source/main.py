@@ -9,6 +9,7 @@ scoreFont = pygame.font.SysFont('Times New Roman', 14)
 screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
 currentScore = 0
+exitFlag = False
 delay = 100
 
 class enemy:
@@ -42,6 +43,7 @@ class enemy:
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
 class controller:
+    global exitFlag
     def __init__(self):
         self.yPos = groundHeight
         self.xPos = 50
@@ -69,6 +71,7 @@ class controller:
     def collisionDetect(self, enemy):
         for i in enemy:
             if self.isTouching(i):
+                exitFlag = True
                 return True
         return False
 
@@ -89,11 +92,12 @@ class controller:
 
 def scoreCounter(block1, block2, block3, delay):
     global currentScore
+    global exitFlag
     delay = 100
     block1.speed = 10
     block2.speed = 10
     block3.speed = 10
-    while(True):
+    while(not exitFlag):
         # error is in this part: "Text has zero width"
         currentScore += 1
         if currentScore <= 1000:
