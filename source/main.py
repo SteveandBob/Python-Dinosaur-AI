@@ -88,29 +88,25 @@ class controller:
         screen.blit(self.dino, self.dinoRect)
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
-def scoreCounter(block1, block2, block3, player, delay):
+def scoreCounter(block1, block2, block3, player):  # add a delay variable
     global currentScore
-    delay = 100
-    block1.speed = 10
-    block2.speed = 10
-    block3.speed = 10
-    while(True):
-        # error is in this part: "Text has zero width"
-        currentScore += 1
-        if currentScore <= 1000:
-            if currentScore % 100 == 0:
-                delay -= 10
-                block1.speed += 1
-                block2.speed += 1
-                block3.speed += 1
-        else:
-            if currentScore % 100 == 0:
-                delay -= 5
-                if delay < 5:
-                    delay = 5
-        if(player.collisionDetect):
-            sys.exit()
-        pygame.time.wait(delay)
+    global delay
+    # while(True):
+    currentScore += 1
+    if currentScore <= 1000:
+        if currentScore % 100 == 0:
+            delay -= 10
+            block1.speed += 1
+            block2.speed += 1
+            block3.speed += 1
+    else:
+        if currentScore % 100 == 0:
+            delay -= 5
+            if delay < 5:
+                delay = 5
+        # if(player.collisionDetect):
+        #     sys.exit()
+        # pygame.time.wait(delay)
 
 
 class ai:
@@ -186,23 +182,44 @@ block1 = enemy(1000)
 block2 = enemy(1400)
 block3 = enemy(1800)
 blocks = [block1, block2, block3]
+delay = 100
+blocks[0].speed = 10
+blocks[1].speed = 10
+blocks[2].speed = 10
 player = controller()
 ai = ai()
 learningModule = learningModule()
+
+def reset():
+    global delay
+    global blocks
+    global currentScore
+    currentScore = 0
+    block1 = enemy(1000)
+    block2 = enemy(1400)
+    block3 = enemy(1800)
+    blocks = [block1, block2, block3]
+    delay = 100
+    blocks[0].speed = 10
+    blocks[1].speed = 10
+    blocks[2].speed = 10
 
 class scoreThread(threading.Thread):
     def __init__(self, Name, ID):
         threading.Thread.__init__(self)
         self.Name = Name
         self.ID = ID
-
     def run(self):
+        print("working")
         scoreCounter(block1, block2, block3, player, delay)
+
+resets = 0
 
 def main():
     done = False
-    score = scoreThread("thread1", 1)
-    score.start()
+    global resets
+    # score = scoreThread("thread1", 1)
+    # score.start()
     while not done:
         screen.fill((245, 245, 245))
         # paints over entire screen, effectively clears screen
@@ -216,10 +233,14 @@ def main():
         if player.collisionDetect(blocks):
             print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             print("HIT HIT HIT HIT HIT")
-            done = True
+            reset()
+            resets += 1
             continue
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
+
+        # temporary score counting, no threading
+        scoreCounter(blocks[0], blocks[1], blocks[2], player)
 
         # AI logic, decides when AI jumps
         ai.run(player, block1, block2, block3)
@@ -231,7 +252,7 @@ def main():
             i.update()
         player.update(blocks)
         # Handles Score text
-        scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
+        scoreText = scoreFont.render(str(currentScore) + "  resets: " + str(resets), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
         print(str(currentScore) + " " + str(blocks[0].speed) + " " + str(blocks[1].speed))
 
