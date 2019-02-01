@@ -29,7 +29,7 @@ class enemy:
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
-            self.randomDist = random.randint((self.speed * 10) + 50, (self.speed * 10) + 100)
+            self.randomDist = random.randint((self.speed * 10) + 0, (self.speed * 10) + 0)
             # TODO: NOTICE THE + 50 AND THE + 100 IN THE ABOVE LINE
             # WE CAN SHORTEN IT AS AI GETS GOOD
             # basically, the above line makes sure the dinosaur always has enough space to make the jump
@@ -72,7 +72,7 @@ class controller:
                 return True
         return False
 
-    def update(self, blocklist, ai):
+    def update(self, blocklist):
         # updates the player and draws it
         # also handles jump after it has been initiated
         if not self.grounded:
@@ -84,10 +84,6 @@ class controller:
             self.dinoRect.move([0, 200 - self.yPos])
             self.yPos = 200
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
-        if self.collisionDetect(blocklist):
-            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
-            pygame.quit()
-            sys.exit()
         screen.blit(self.dino, self.dinoRect)
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
@@ -143,7 +139,7 @@ class ai:
 
     def checkState(self, player):
         self.alive = player.collisionDetect
-        if(self.alive == True):
+        if(self.alive):
             self.aiScore = player.score
             return True
         else:
@@ -168,7 +164,7 @@ class ai:
         self.modOut2 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) - (self.onGround * self.weight3)
         self.modOut3 = (self.blockDist * self.weight1) - (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
 
-        #output layer
+        # output layer
         self.finalOutput = self.modOut1 - self.modOut2 + self.modOut3
         if(self.finalOutput < self.key):
             self.finalOutput = 1
@@ -179,7 +175,7 @@ class learningModule():
     def __init__(self):
         self.oldMod = [None, None, None]
     def improveNodes(self, ai, weight1, weight2, weight3):
-        self.openFile = open("weightValues.txt","a+")
+        self.openFile = open("weightValues.txt", "a+")
         self.openFile.write(str(weight1) + " " + str(weight2) + " " + str(weight3))
 
 block1 = enemy(1000)
@@ -205,21 +201,38 @@ def main():
     score.start()
     while not done:
         screen.fill((245, 245, 245))
-        # for event in pygame.event.get():
-        #     if event.type == pygame.QUIT:
-        #         done = True
-        #         continue
+        # paints over entire screen, effectively clears screen
+
+        # exit loop: checks for exit conditions
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+                continue
+        print("check collision")
+        if player.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+            print("HIT HIT HIT HIT HIT")
+            done = True
+            continue
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
+
+        # AI logic, decides when AI jumps
         ai.run(player, block1, block2, block3)
         if(ai.finalOutput == 1):
             player.jump()
+
+        # Draws all objects onto the screen
         for i in blocks:
             i.update()
-        player.update(blocks, ai)
+        player.update(blocks)
+        # Handles Score text
         scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
         print(str(currentScore) + " " + str(blocks[0].speed) + " " + str(blocks[1].speed))
+
+        # not completely sure what this does kek, I think it's for double buffers
+        # TODO: does anyone wanna confirm this lol?
         pygame.display.flip()
         # this updates graphics, pygame is buffered and switches around buffers
         pygame.time.wait(40)
@@ -227,6 +240,5 @@ def main():
 
 if __name__ == "__main__":
     main()
-    pygame.time.wait(10)
     pygame.display.quit()
     sys.exit()
