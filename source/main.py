@@ -26,6 +26,7 @@ class enemy:
         # when this block is spawned determines the position of the enemy
 
     def update(self):
+    
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
@@ -43,6 +44,7 @@ class enemy:
 
 class controller:
     def __init__(self):
+        self.notDead = True
         self.yPos = groundHeight
         self.xPos = 50
         self.dino = pygame.image.load("./dinosaur.png")
@@ -74,19 +76,23 @@ class controller:
         return False
 
     def update(self, blocklist):
-        # updates the player and draws it
-        # also handles jump after it has been initiated
-        if not self.grounded:
-            self.yPos -= self.jumpIncrement
-            self.dinoRect = self.dinoRect.move([0, -self.jumpIncrement])
-            self.jumpIncrement -= 2
-        if self.yPos >= 200:
-            self.grounded = True
-            self.dinoRect.move([0, 200 - self.yPos])
-            self.yPos = 200
-        # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
-        screen.blit(self.dino, self.dinoRect)
-        # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+        if self.notDead:
+            # updates the player and draws it
+            # also handles jump after it has been initiated
+            if not self.grounded:
+                self.yPos -= self.jumpIncrement
+                self.dinoRect = self.dinoRect.move([0, -self.jumpIncrement])
+                self.jumpIncrement -= 2
+            if self.yPos >= 200:
+                self.grounded = True
+                self.dinoRect.move([0, 200 - self.yPos])
+                self.yPos = 200
+            # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+            screen.blit(self.dino, self.dinoRect)
+            # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
+
+    def delete(self):
+        self.notDead = False
 
 def scoreCounter(block1, block2, block3, player):  # add a delay variable
     global currentScore
@@ -107,7 +113,6 @@ def scoreCounter(block1, block2, block3, player):  # add a delay variable
         # if(player.collisionDetect):
         #     sys.exit()
         # pygame.time.wait(delay)
-
 
 class ai:
     def __init__(self):
@@ -187,6 +192,15 @@ blocks[0].speed = 10
 blocks[1].speed = 10
 blocks[2].speed = 10
 player = controller()
+player1 = controller()
+player2 = controller()
+player3 = controller()
+player4 = controller()
+playerList = [player, player1, player2, player3, player4]
+ai1 = ai()
+ai2 = ai()
+ai3 = ai()
+ai4 = ai()
 ai = ai()
 learningModule = learningModule()
 
@@ -232,10 +246,22 @@ def main():
         print("check collision")
         if player.collisionDetect(blocks):
             print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
-            print("HIT HIT HIT HIT HIT")
-            reset()
-            resets += 1
-            continue
+            player.delete()
+        if player1.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+            player1.delete()
+        if player2.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+            player2.delete()
+        if player3.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+            player3.delete()
+        if player4.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+            player4.delete()
+        if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
+            break
+        
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
 
@@ -244,13 +270,26 @@ def main():
 
         # AI logic, decides when AI jumps
         ai.run(player, block1, block2, block3)
+        ai1.run(player1, block1, block2, block3)
+        ai2.run(player2, block1, block2, block3)
+        ai3.run(player3, block1, block2, block3)
+        ai4.run(player4, block1, block2, block3)
         if(ai.finalOutput == 1):
             player.jump()
+        if(ai1.finalOutput == 1):
+            player1.jump()
+        if(ai2.finalOutput == 1):
+            player2.jump()
+        if(ai3.finalOutput == 1):
+            player3.jump()
+        if(ai4.finalOutput == 1):
+            player4.jump()
 
         # Draws all objects onto the screen
         for i in blocks:
             i.update()
-        player.update(blocks)
+        for i in playerList:
+            i.update(blocks)
         # Handles Score text
         scoreText = scoreFont.render(str(currentScore) + "  resets: " + str(resets), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
