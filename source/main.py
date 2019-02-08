@@ -108,7 +108,6 @@ def scoreCounter(block1, block2, block3, player):  # add a delay variable
         #     sys.exit()
         # pygame.time.wait(delay)
 
-
 class ai:
     def __init__(self):
         self.aiScore = 0
@@ -187,7 +186,16 @@ blocks[0].speed = 10
 blocks[1].speed = 10
 blocks[2].speed = 10
 player = controller()
+player1 = controller()
+player2 = controller()
+player3 = controller()
+player4 = controller()
+playerList = [player, player1, player2, player3, player4]
 ai = ai()
+ai1 = ai()
+ai2 = ai()
+ai3 = ai()
+ai4 = ai()
 learningModule = learningModule()
 
 def reset():
@@ -244,13 +252,26 @@ def main():
 
         # AI logic, decides when AI jumps
         ai.run(player, block1, block2, block3)
+        ai1.run(player1, block1, block2, block3)
+        ai2.run(player2, block1, block2, block3)
+        ai3.run(player3, block1, block2, block3)
+        ai4.run(player4, block1, block2, block3)
         if(ai.finalOutput == 1):
             player.jump()
+        if(ai1.finalOutput == 1):
+            player1.jump()
+        if(ai2.finalOutput == 1):
+            player2.jump()
+        if(ai3.finalOutput == 1):
+            player3.jump()
+        if(ai4.finalOutput == 1):
+            player4.jump()
 
         # Draws all objects onto the screen
         for i in blocks:
             i.update()
-        player.update(blocks)
+        for i in playerList:
+            i.update(blocks)
         # Handles Score text
         scoreText = scoreFont.render(str(currentScore) + "  resets: " + str(resets), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
