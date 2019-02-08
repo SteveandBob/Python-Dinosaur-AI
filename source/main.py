@@ -202,6 +202,10 @@ ai2 = ai()
 ai3 = ai()
 ai4 = ai()
 ai = ai()
+ai1 = ai()
+ai2 = ai()
+ai3 = ai()
+ai4 = ai()
 learningModule = learningModule()
 
 def reset():
