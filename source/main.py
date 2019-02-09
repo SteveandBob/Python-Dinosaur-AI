@@ -5,6 +5,7 @@ import threading
 import random
 
 pygame.init()
+pygame.mixer.quit()
 scoreFont = pygame.font.SysFont('Times New Roman', 14)
 screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
@@ -26,7 +27,7 @@ class enemy:
         # when this block is spawned determines the position of the enemy
 
     def update(self):
-    
+
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
@@ -202,10 +203,6 @@ ai2 = ai()
 ai3 = ai()
 ai4 = ai()
 ai = ai()
-ai1 = ai()
-ai2 = ai()
-ai3 = ai()
-ai4 = ai()
 learningModule = learningModule()
 
 def reset():
@@ -265,7 +262,7 @@ def main():
             player4.delete()
         if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
             break
-        
+
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
 
