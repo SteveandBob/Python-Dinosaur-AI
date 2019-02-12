@@ -9,3 +9,5 @@
 0.4.2 Jan. 19, 2019 - Game bugs have been ironed out
 
 0.4.4 Jan. 20, 2019 - More bugs squashed, sprites added!
+
+0.4.5 Feb. 12, 2019 - Sound support disabled to decrease CPU resources required
