@@ -11,6 +11,7 @@ screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
 currentScore = 0
 delay = 100
+openFile = open("weightValues.txt", "a+")
 
 class enemy:
     global currentScore
@@ -118,7 +119,7 @@ def scoreCounter(block1, block2, block3, player):  # add a delay variable
 class ai:
     def __init__(self):
         self.aiScore = 0
-        self.alive = True
+        self.notAlive = False
         self.quit = False
         self.playerSpeed = 0
         self.onGround = 1
@@ -128,13 +129,15 @@ class ai:
         self.modOut2 = 0
         self.modOut3 = 0
         self.finalOutput = 0
-        self.key = 100
+        self.keyMin = 1
+        self.keyMax = 100
+        self.key = random.randint(keyMin, keyMax)
         self.min1 = 1
-        self.min2 = 5
-        self.min3 = 5
-        self.max1 = 3
-        self.max2 = 9
-        self.max3 = 9
+        self.min2 = 100
+        self.min3 = 1
+        self.max1 = 100
+        self.max2 = 1
+        self.max3 = 100
         self.weight1 = random.uniform(self.min1, self.max1)
         self.weight2 = random.uniform(self.min2, self.max2)
         self.weight3 = random.uniform(self.min3, self.max3)
@@ -144,45 +147,66 @@ class ai:
         return self.weights
 
     def checkState(self, player):
-        self.alive = player.collisionDetect
-        if(self.alive):
+        self.notAlive = player.collisionDetect
+        if(self.notAlive):
             self.aiScore = player.score
             return True
         else:
             return False
 
     def run(self, player, block1, block2, block3):
-        self.playerSpeed = block1.speed
-        if(player.grounded):
-            self.onGround = 1
-        else:
-            self.onGround = 0
-        if(block1.xPos < block2.xPos and block1.xPos < block3.xPos):
-            self.nextBlockPos = block1.xPos
-        elif(block2.xPos < block1.xPos and block2.xPos < block3.xPos):
-            self.nextBlockPos = block2.xPos
-        else:
-            self.nextBlockPos = block3.xPos
-        self.blockDist = self.nextBlockPos - player.dinoRect.right
+        if player.notDead:
+            self.playerSpeed = block1.speed
+            if(player.grounded):
+                self.onGround = 1
+            else:
+                self.onGround = 0
+            if(block1.xPos < block2.xPos and block1.xPos < block3.xPos):
+                self.nextBlockPos = block1.xPos
+            elif(block2.xPos < block1.xPos and block2.xPos < block3.xPos):
+                self.nextBlockPos = block2.xPos
+            else:
+                self.nextBlockPos = block3.xPos
+            self.blockDist = self.nextBlockPos - player.dinoRect.right
 
-        # hidden nodes
-        self.modOut1 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
-        self.modOut2 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) - (self.onGround * self.weight3)
-        self.modOut3 = (self.blockDist * self.weight1) - (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
+            # hidden nodes
+            self.modOut1 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
+            self.modOut2 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) - (self.onGround * self.weight3)
+            self.modOut3 = (self.blockDist * self.weight1) - (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
 
-        # output layer
-        self.finalOutput = self.modOut1 - self.modOut2 + self.modOut3
-        if(self.finalOutput < self.key):
-            self.finalOutput = 1
-        else:
-            self.finalOutput = 0
+            # output layer
+            self.finalOutput = self.modOut1 - self.modOut2 + self.modOut3
+            if(self.finalOutput < self.key):
+                self.finalOutput = 1
+            else:
+                self.finalOutput = 0
 
 class learningModule():
     def __init__(self):
-        self.oldMod = [None, None, None]
-    def improveNodes(self, ai, weight1, weight2, weight3):
-        self.openFile = open("weightValues.txt", "a+")
-        self.openFile.write(str(weight1) + " " + str(weight2) + " " + str(weight3))
+        self.oldMods = [
+            "","","",""
+            "","","",""
+            "","","",""
+            "","","",""
+            "","","",""
+        ] #TODO: Fix 2d array that will be used to read from a .txt
+    def evaluate(self):
+        for i in self.score:
+            for j in self.score:
+                if self.score(i) > self.score(j):
+                    tempKey = self.score(i)
+                    self.score(i) = self.score(j)
+                    self.score(j) = tempKey
+
+    def improveNodes(self, aiList):
+        #TODO: make some algorithm to determine the new range
+        #Below is a makeshift temporary solution
+        for i in aiList:
+            self.score(i) = aiList(i).aiScore
+        evaluate()
+        for i in 
+
+
 
 block1 = enemy(1000)
 block2 = enemy(1400)
@@ -203,6 +227,7 @@ ai2 = ai()
 ai3 = ai()
 ai4 = ai()
 ai = ai()
+aiList = [ai, ai1, ai2, ai3, ai4]
 learningModule = learningModule()
 
 def reset():
@@ -245,20 +270,20 @@ def main():
                 done = True
                 continue
         print("check collision")
-        if player.collisionDetect(blocks):
-            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+        if player.collisionDetect(blocks) and player.notDead:
+            openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key))
             player.delete()
-        if player1.collisionDetect(blocks):
-            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+        if player1.collisionDetect(blocks) and player1.notDead:
+            openFile.write(str(ai1.weights[0]) + " " + str(ai1.weights[1]) + " " + str(ai1.weights[2]) + " " + str(ai1.key))
             player1.delete()
-        if player2.collisionDetect(blocks):
-            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+        if player2.collisionDetect(blocks) and player2.notDead:
+            openFile.write(str(ai2.weights[0]) + " " + str(ai2.weights[1]) + " " + str(ai2.weights[2]) + " " + str(ai2.key))
             player2.delete()
-        if player3.collisionDetect(blocks):
-            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+        if player3.collisionDetect(blocks) and player3.notDead:
+            openFile.write(str(ai3.weights[0]) + " " + str(ai3.weights[1]) + " " + str(ai3.weights[2]) + " " + str(ai3.key))
             player3.delete()
-        if player4.collisionDetect(blocks):
-            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
+        if player4.collisionDetect(blocks) and player4.notDead:
+            openFile.write(str(ai4.weights[0]) + " " + str(ai4.weights[1]) + " " + str(ai4.weights[2]) + " " + str(ai4.key))
             player4.delete()
         if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
             break
