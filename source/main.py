@@ -3,6 +3,7 @@ import pygame
 import sys
 import threading
 import random
+import array
 
 pygame.init()
 pygame.mixer.quit()
@@ -96,25 +97,25 @@ class controller:
     def delete(self):
         self.notDead = False
 
-def scoreCounter(block1, block2, block3, player):  # add a delay variable
+def scoreCounter(block1, block2, block3, playerList, delay):  # add a delay variable
     global currentScore
-    global delay
-    # while(True):
-    currentScore += 1
-    if currentScore <= 1000:
-        if currentScore % 100 == 0:
-            delay -= 10
-            block1.speed += 1
-            block2.speed += 1
-            block3.speed += 1
-    else:
-        if currentScore % 100 == 0:
-            delay -= 5
-            if delay < 5:
-                delay = 5
-        # if(player.collisionDetect):
-        #     sys.exit()
-        # pygame.time.wait(delay)
+    currentScore = 0
+    while(True):
+        currentScore += 1
+        if currentScore <= 1000:
+            if currentScore % 100 == 0:
+                delay -= 10
+                block1.speed += 1
+                block2.speed += 1
+                block3.speed += 1
+        else:
+            if currentScore % 100 == 0:
+                delay -= 5
+                if delay < 5:
+                    delay = 5
+            if(playerList[0].notDead == False and playerList[1].notDead == False and playerList[2].notDead == False and playerList[3].notDead == False and playerList[4].notDead == False):
+                 sys.exit()
+            pygame.time.wait(delay)
 
 class ai:
     def __init__(self):
@@ -130,8 +131,8 @@ class ai:
         self.modOut3 = 0
         self.finalOutput = 0
         self.keyMin = 1
-        self.keyMax = 100
-        self.key = random.randint(keyMin, keyMax)
+        self.keyMax = 10000
+        self.key = random.randint(self.keyMin, self.keyMax)
         self.min1 = 1
         self.min2 = 100
         self.min3 = 1
@@ -190,29 +191,18 @@ class learningModule():
             "","","",""
             "","","",""
         ] #TODO: Fix 2d array that will be used to read from a .txt
-    def evaluate(self):
-        for i in self.score:
-            for j in self.score:
-                if self.score(i) > self.score(j):
-                    tempKey = self.score(i)
-                    self.score(i) = self.score(j)
-                    self.score(j) = tempKey
-
+        self.score = [[0, self.oldMods[0]], [0, self.oldMods[1]], [0, self.oldMods[2]], [0, self.oldMods[3]], [0, self.oldMods[4]]]
     def improveNodes(self, aiList):
         #TODO: make some algorithm to determine the new range
         #Below is a makeshift temporary solution
-        for i in aiList:
-            self.score(i) = aiList(i).aiScore
-        evaluate()
-        for i in 
-
-
+        temp = "i"
 
 block1 = enemy(1000)
 block2 = enemy(1400)
 block3 = enemy(1800)
 blocks = [block1, block2, block3]
 delay = 100
+currentScore = 0
 blocks[0].speed = 10
 blocks[1].speed = 10
 blocks[2].speed = 10
@@ -251,24 +241,20 @@ class scoreThread(threading.Thread):
         self.ID = ID
     def run(self):
         print("working")
-        scoreCounter(block1, block2, block3, player, delay)
-
-resets = 0
+        scoreCounter(blocks[0], blocks[1], blocks[2], playerList, delay)
 
 def main():
-    done = False
-    global resets
-    # score = scoreThread("thread1", 1)
-    # score.start()
-    while not done:
+    score = scoreThread("thread1", 1)
+    score.start()
+    while True:
         screen.fill((245, 245, 245))
         # paints over entire screen, effectively clears screen
 
         # exit loop: checks for exit conditions
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                done = True
-                continue
+                break
+                
         print("check collision")
         if player.collisionDetect(blocks) and player.notDead:
             openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key))
@@ -290,9 +276,6 @@ def main():
 
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
-
-        # temporary score counting, no threading
-        scoreCounter(blocks[0], blocks[1], blocks[2], player)
 
         # AI logic, decides when AI jumps
         ai.run(player, block1, block2, block3)
@@ -317,9 +300,8 @@ def main():
         for i in playerList:
             i.update(blocks)
         # Handles Score text
-        scoreText = scoreFont.render(str(currentScore) + "  resets: " + str(resets), False, (0, 0, 0))
+        scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
-        print(str(currentScore) + " " + str(blocks[0].speed) + " " + str(blocks[1].speed))
 
         # not completely sure what this does kek, I think it's for double buffers
         # TODO: does anyone wanna confirm this lol?
