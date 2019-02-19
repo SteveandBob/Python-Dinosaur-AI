@@ -270,20 +270,20 @@ def main():
                 done = True
                 continue
         print("check collision")
-        if player.collisionDetect(blocks) and player.notDead:
-            openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key))
+        if player.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             player.delete()
-        if player1.collisionDetect(blocks) and player1.notDead:
-            openFile.write(str(ai1.weights[0]) + " " + str(ai1.weights[1]) + " " + str(ai1.weights[2]) + " " + str(ai1.key))
+        if player1.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             player1.delete()
-        if player2.collisionDetect(blocks) and player2.notDead:
-            openFile.write(str(ai2.weights[0]) + " " + str(ai2.weights[1]) + " " + str(ai2.weights[2]) + " " + str(ai2.key))
+        if player2.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             player2.delete()
-        if player3.collisionDetect(blocks) and player3.notDead:
-            openFile.write(str(ai3.weights[0]) + " " + str(ai3.weights[1]) + " " + str(ai3.weights[2]) + " " + str(ai3.key))
+        if player3.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             player3.delete()
-        if player4.collisionDetect(blocks) and player4.notDead:
-            openFile.write(str(ai4.weights[0]) + " " + str(ai4.weights[1]) + " " + str(ai4.weights[2]) + " " + str(ai4.key))
+        if player4.collisionDetect(blocks):
+            print(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]))
             player4.delete()
         if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
             break
