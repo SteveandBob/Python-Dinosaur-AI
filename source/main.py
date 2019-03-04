@@ -13,6 +13,14 @@ groundHeight = 210
 currentScore = 0
 delay = 100
 openFile = open("weightValues.txt", "r+")
+keyMin = 1
+keyMax = 10000
+min1 = 1
+min2 = 100
+min3 = 1
+max1 = 100
+max2 = 1
+max3 = 100
 
 class enemy:
     global currentScore
@@ -118,7 +126,7 @@ def scoreCounter(block1, block2, block3, playerList, delay):  # add a delay vari
             pygame.time.wait(delay)
 
 class ai:
-    def __init__(self):
+    def __init__(self, keyMin, keyMax, min1, min2, min3, max1, max2, max3):
         self.aiScore = 0
         self.notAlive = False
         self.quit = False
@@ -199,9 +207,20 @@ class learningModule():
                 self.oldMods(i, j) = int(temp1(k))
 
     def improveNodes(self, aiList):
+        global keyMin, keyMax, min1, min2, min3, max1, max2, max3
         #TODO: make some algorithm to determine the new range
         #Below is a makeshift temporary solution
-        temp = "i"
+        for i in range(5):
+            for j in range(5):
+                if self.oldMods(i, 4) > self.oldMods(j, 4):
+                    temp = self.oldMods(i)
+                    self.oldMods(i) = self.oldMods(j)
+                    self.oldMods(j) = temp
+        acc = 0.35
+        for i in range(5):
+            acc -= 0.05
+            for j in range(4):
+                self.oldMods(i, j) *= acc
 
 block1 = enemy(1000)
 block2 = enemy(1400)
@@ -218,11 +237,11 @@ player2 = controller()
 player3 = controller()
 player4 = controller()
 playerList = [player, player1, player2, player3, player4]
-ai1 = ai()
-ai2 = ai()
-ai3 = ai()
-ai4 = ai()
-ai = ai()
+ai1 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai2 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai3 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai4 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 aiList = [ai, ai1, ai2, ai3, ai4]
 learningModule = learningModule()
 
@@ -246,7 +265,6 @@ class scoreThread(threading.Thread):
         self.Name = Name
         self.ID = ID
     def run(self):
-        print("working")
         scoreCounter(blocks[0], blocks[1], blocks[2], playerList, delay)
 
 def main():
