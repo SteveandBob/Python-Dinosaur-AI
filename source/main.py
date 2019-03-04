@@ -199,11 +199,14 @@ class learningModule():
             [0,0,0,0,0]
             [0,0,0,0,0]
         ] #TODO: Fix 2d array that will be used to read from a .txt
-        temp1[5];
+        temp1[5]
+        tempStr=""
         for i in range(5):
             tempString = openFile.readline(i)
             for j in range(5):
                 temp1(k) = tempString(0, tempString.find(" "))
+                tempStr = tempString(tempString.find(" "), -1)
+                tempString = tempStr
                 self.oldMods(i, j) = int(temp1(k))
 
     def improveNodes(self, aiList):
