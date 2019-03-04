@@ -12,7 +12,7 @@ screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
 currentScore = 0
 delay = 100
-openFile = open("weightValues.txt", "a+")
+openFile = open("weightValues.txt", "r+")
 
 class enemy:
     global currentScore
@@ -185,13 +185,18 @@ class ai:
 class learningModule():
     def __init__(self):
         self.oldMods = [
-            "","","",""
-            "","","",""
-            "","","",""
-            "","","",""
-            "","","",""
+            ["","","","",""]
+            ["","","","",""]
+            ["","","","",""]
+            ["","","","",""]
+            ["","","","",""]
         ] #TODO: Fix 2d array that will be used to read from a .txt
-        self.score = [[0, self.oldMods[0]], [0, self.oldMods[1]], [0, self.oldMods[2]], [0, self.oldMods[3]], [0, self.oldMods[4]]]
+        for i in range(5):
+            for j in range(5):
+                tempString = openFile.readline(i);
+                for k in range(5):
+                    temp1 = tempString(0, tempString.find(" "))
+
     def improveNodes(self, aiList):
         #TODO: make some algorithm to determine the new range
         #Below is a makeshift temporary solution
@@ -257,19 +262,19 @@ def main():
                 
         print("check collision")
         if player.collisionDetect(blocks) and player.notDead:
-            openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key))
+            openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key) + " " + str(ai.aiScore))
             player.delete()
         if player1.collisionDetect(blocks) and player1.notDead:
-            openFile.write(str(ai1.weights[0]) + " " + str(ai1.weights[1]) + " " + str(ai1.weights[2]) + " " + str(ai1.key))
+            openFile.write(str(ai1.weights[0]) + " " + str(ai1.weights[1]) + " " + str(ai1.weights[2]) + " " + str(ai1.key) + " " + str(ai1.aiScore))
             player1.delete()
         if player2.collisionDetect(blocks) and player2.notDead:
-            openFile.write(str(ai2.weights[0]) + " " + str(ai2.weights[1]) + " " + str(ai2.weights[2]) + " " + str(ai2.key))
+            openFile.write(str(ai2.weights[0]) + " " + str(ai2.weights[1]) + " " + str(ai2.weights[2]) + " " + str(ai2.key) + " " + str(ai2.aiScore))
             player2.delete()
         if player3.collisionDetect(blocks) and player3.notDead:
-            openFile.write(str(ai3.weights[0]) + " " + str(ai3.weights[1]) + " " + str(ai3.weights[2]) + " " + str(ai3.key))
+            openFile.write(str(ai3.weights[0]) + " " + str(ai3.weights[1]) + " " + str(ai3.weights[2]) + " " + str(ai3.key) + " " + str(ai3.aiScore))
             player3.delete()
         if player4.collisionDetect(blocks) and player4.notDead:
-            openFile.write(str(ai4.weights[0]) + " " + str(ai4.weights[1]) + " " + str(ai4.weights[2]) + " " + str(ai4.key))
+            openFile.write(str(ai4.weights[0]) + " " + str(ai4.weights[1]) + " " + str(ai4.weights[2]) + " " + str(ai4.key) + " " + str(ai4.aiScore))
             player4.delete()
         if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
             break
