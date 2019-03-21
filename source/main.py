@@ -224,6 +224,11 @@ class learningModule():
             acc -= 0.05
             for j in range(4):
                 self.oldMods(i, j) *= acc
+        for i in range(4):
+            tempInt = 0
+            for j in range(5):
+                tempInt += self.oldMods(j, i)
+            self.oldMods(1, i) = tempInt
 
 block1 = enemy(1000)
 block2 = enemy(1400)
