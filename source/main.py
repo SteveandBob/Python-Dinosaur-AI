@@ -4,6 +4,7 @@ import sys
 import threading
 import random
 import array
+import math
 
 pygame.init()
 pygame.mixer.quit()
@@ -15,12 +16,14 @@ delay = 100
 openFile = open("weightValues.txt", "r+")
 keyMin = 1
 keyMax = 10000
+key = random.randint(self.keyMin, self.keyMax)
 min1 = 1
-min2 = 100
+min2 = 1000
 min3 = 1
-max1 = 100
+max1 = 1000
 max2 = 1
-max3 = 100
+max3 = 1000
+iteration = 1
 
 class enemy:
     global currentScore
@@ -138,15 +141,15 @@ class ai:
         self.modOut2 = 0
         self.modOut3 = 0
         self.finalOutput = 0
-        self.keyMin = 1
-        self.keyMax = 10000
+        self.keyMin = keyMin
+        self.keyMax = keyMax
+        self.min1 = min1
+        self.min2 = min2
+        self.min3 = min3
+        self.max1 = max1
+        self.max2 = max2
+        self.max3 = max3
         self.key = random.randint(self.keyMin, self.keyMax)
-        self.min1 = 1
-        self.min2 = 100
-        self.min3 = 1
-        self.max1 = 100
-        self.max2 = 1
-        self.max3 = 100
         self.weight1 = random.uniform(self.min1, self.max1)
         self.weight2 = random.uniform(self.min2, self.max2)
         self.weight3 = random.uniform(self.min3, self.max3)
@@ -162,6 +165,21 @@ class ai:
             return True
         else:
             return False
+
+    def reroll(self, keyMin, keyMax, min1, min2, min3, max1, max2, max3):
+        self.keyMin = keyMin
+        self.keyMax = keyMax
+        self.min1 = min1
+        self.min2 = min2
+        self.min3 = min3
+        self.max1 = max1
+        self.max2 = max2
+        self.max3 = max3
+        self.key = random.randint(self.keyMin, self.keyMax)
+        self.weight1 = random.uniform(self.min1, self.max1)
+        self.weight2 = random.uniform(self.min2, self.max2)
+        self.weight3 = random.uniform(self.min3, self.max3)
+        self.weights = [self.weight1, self.weight2, self.weight3]
 
     def run(self, player, block1, block2, block3):
         if player.notDead:
@@ -179,12 +197,15 @@ class ai:
             self.blockDist = self.nextBlockPos - player.dinoRect.right
 
             # hidden nodes
-            self.modOut1 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
-            self.modOut2 = (self.blockDist * self.weight1) + (self.playerSpeed * self.weight2) - (self.onGround * self.weight3)
-            self.modOut3 = (self.blockDist * self.weight1) - (self.playerSpeed * self.weight2) + (self.onGround * self.weight3)
+            self.modOut1 = [(self.blockDist * self.weight1), (self.playerSpeed * self.weight2), (self.onGround * self.weight3)]
+            self.modOut2 = [(self.blockDist * self.weight1), (self.playerSpeed * self.weight2), (self.onGround * self.weight3)]
+            self.modOut3 = [(self.blockDist * self.weight1), (self.playerSpeed * self.weight2), (self.onGround * self.weight3)]
 
             # output layer
-            self.finalOutput = self.modOut1 - self.modOut2 + self.modOut3
+            self.finalOutput = self.modOut1(0) * ((self.modOut2(1)*self.modOut3(2))-(self.modOut2(2)*selfmodOut3(1)))
+            self.finalOutput += self.modOut1(1) * ((self.modOut2(0)*self.modOut3(2))-(self.modOut2(2)*selfmodOut3(0)))
+            self.finalOutput += self.modOut1(2) * ((self.modOut2(0)*self.modOut3(1))-(self.modOut2(1)*selfmodOut3(0)))
+            
             if(self.finalOutput < self.key):
                 self.finalOutput = 1
             else:
@@ -208,6 +229,22 @@ class learningModule():
                 tempStr = tempString(tempString.find(" "), -1)
                 tempString = tempStr
                 self.oldMods(i, j) = int(temp1(k))
+        self.tolerance = 500
+
+    def evaluateTolerance(self, iteration):
+        if iteration == 1:
+            self.oldScore = 0
+            for i in range(4):
+                self.oldScore += self.oldMods(i, 4)
+            self.oldScore /= 5
+        else:
+            self.newScore = 0
+            for i in range(4):
+                self.newScore += self.oldMods(i, 4)
+            self.newScore /= 5
+            difference = self.newScore - self.oldScore
+            improvement = (1/10000000)*(difference**3)
+            self.tolerance += improvement
 
     def improveNodes(self, aiList):
         global keyMin, keyMax, min1, min2, min3, max1, max2, max3
@@ -229,6 +266,9 @@ class learningModule():
             for j in range(5):
                 tempInt += self.oldMods(j, i)
             self.oldMods(1, i) = tempInt
+        evaluateTolerance(iteration)
+        self.newKeyMin = self.oldMods(0, 3) - self.tolerance
+        self.newKeyMax = self.oldMods(0, 3) - self.tolerance
 
 block1 = enemy(1000)
 block2 = enemy(1400)
