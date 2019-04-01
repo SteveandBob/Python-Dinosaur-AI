@@ -16,7 +16,6 @@ delay = 100
 openFile = open("weightValues.txt", "r+")
 keyMin = 1
 keyMax = 10000
-key = random.randint(self.keyMin, self.keyMax)
 min1 = 1
 min2 = 1000
 min3 = 1
@@ -202,9 +201,9 @@ class ai:
             self.modOut3 = [(self.blockDist * self.weight1), (self.playerSpeed * self.weight2), (self.onGround * self.weight3)]
 
             # output layer
-            self.finalOutput = self.modOut1(0) * ((self.modOut2(1)*self.modOut3(2))-(self.modOut2(2)*selfmodOut3(1)))
-            self.finalOutput += self.modOut1(1) * ((self.modOut2(0)*self.modOut3(2))-(self.modOut2(2)*selfmodOut3(0)))
-            self.finalOutput += self.modOut1(2) * ((self.modOut2(0)*self.modOut3(1))-(self.modOut2(1)*selfmodOut3(0)))
+            self.finalOutput = self.modOut1[0] * ((self.modOut2[1]*self.modOut3[2])-(self.modOut2[2]*self.modOut3[1]))
+            self.finalOutput += self.modOut1[1] * ((self.modOut2[0]*self.modOut3[2])-(self.modOut2[2]*self.modOut3[0]))
+            self.finalOutput += self.modOut1[2] * ((self.modOut2[0]*self.modOut3[1])-(self.modOut2[1]*self.modOut3[0]))
             
             if(self.finalOutput < self.key):
                 self.finalOutput = 1
@@ -214,37 +213,40 @@ class ai:
 class learningModule():
     def __init__(self):
         self.oldMods = [
-            [0,0,0,0,0]
-            [0,0,0,0,0]
-            [0,0,0,0,0]
-            [0,0,0,0,0]
-            [0,0,0,0,0]
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
+            [0,0,0,0,0],
         ] #TODO: Fix 2d array that will be used to read from a .txt
-        temp1[5]
-        tempStr=""
+        self.inputArr = ["", "", "", "", ""]
+        self.tempStr = ""
+        self.tolerance = 500
+
+    def getMods(self):
         for i in range(5):
             tempString = openFile.readline(i)
             for j in range(5):
-                temp1(k) = tempString(0, tempString.find(" "))
-                tempStr = tempString(tempString.find(" "), -1)
+                spaceIndex = tempString.find(" ")
+                self.inputArr[j] = tempString[:spaceIndex]
+                self.tempStr = tempString[spaceIndex:]
                 tempString = tempStr
-                self.oldMods(i, j) = int(temp1(k))
-        self.tolerance = 500
+                self.oldMods[i, j] = int(temp1[j])
 
     def evaluateTolerance(self, iteration):
         if iteration == 1:
             self.oldScore = 0
             for i in range(4):
-                self.oldScore += self.oldMods(i, 4)
+                self.oldScore += self.oldMods[i, 4]
             self.oldScore /= 5
         else:
             self.newScore = 0
             for i in range(4):
-                self.newScore += self.oldMods(i, 4)
+                self.newScore += self.oldMods[i, 4]
             self.newScore /= 5
             difference = self.newScore - self.oldScore
             improvement = (1/10000000)*(difference**3)
-            self.tolerance += improvement
+            self.tolerance -= improvement
 
     def improveNodes(self, aiList):
         global keyMin, keyMax, min1, min2, min3, max1, max2, max3
@@ -252,23 +254,23 @@ class learningModule():
         #Below is a makeshift temporary solution
         for i in range(5):
             for j in range(5):
-                if self.oldMods(i, 4) > self.oldMods(j, 4):
-                    temp = self.oldMods(i)
-                    self.oldMods(i) = self.oldMods(j)
-                    self.oldMods(j) = temp
+                if self.oldMods[i, 4] > self.oldMods[j, 4]:
+                    temp = self.oldMods[i]
+                    self.oldMods[i] = self.oldMods[j]
+                    self.oldMods[j] = temp
         acc = 0.35
         for i in range(5):
             acc -= 0.05
             for j in range(4):
-                self.oldMods(i, j) *= acc
+                self.oldMods[i, j] *= acc
         for i in range(4):
             tempInt = 0
             for j in range(5):
-                tempInt += self.oldMods(j, i)
-            self.oldMods(1, i) = tempInt
+                tempInt += self.oldMods[j, i]
+            self.oldMods[1, i] = tempInt
         evaluateTolerance(iteration)
-        self.newKeyMin = self.oldMods(0, 3) - self.tolerance
-        self.newKeyMax = self.oldMods(0, 3) - self.tolerance
+        self.newKeyMin = self.oldMods[0, 3] - self.tolerance
+        self.newKeyMax = self.oldMods[0, 3] - self.tolerance
 
 block1 = enemy(1000)
 block2 = enemy(1400)
@@ -326,8 +328,7 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 break
-                
-        print("check collision")
+
         if player.collisionDetect(blocks) and player.notDead:
             openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key) + " " + str(ai.aiScore))
             player.delete()
