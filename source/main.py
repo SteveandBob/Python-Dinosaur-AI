@@ -13,7 +13,8 @@ screen = pygame.display.set_mode((1000, 300))
 groundHeight = 210
 currentScore = 0
 delay = 100
-openFile = open("weightValues.txt", "r+")
+writeStream = open("weight_values.txt", "w")
+readStream = open("weight_values.txt", "r")
 keyMin = 1
 keyMax = 10000
 min1 = 1
@@ -123,9 +124,10 @@ def scoreCounter(block1, block2, block3, playerList, delay):  # add a delay vari
                 delay -= 5
                 if delay < 5:
                     delay = 5
-            if(playerList[0].notDead == False and playerList[1].notDead == False and playerList[2].notDead == False and playerList[3].notDead == False and playerList[4].notDead == False):
+            if(not playerList[0].notDead and not playerList[1].notDead and not playerList[2].notDead and not playerList[3].notDead and not playerList[4].notDead):
                  sys.exit()
-            pygame.time.wait(delay)
+        pygame.time.wait(delay)
+    
 
 class ai:
     def __init__(self, keyMin, keyMax, min1, min2, min3, max1, max2, max3):
@@ -181,6 +183,7 @@ class ai:
         self.weights = [self.weight1, self.weight2, self.weight3]
 
     def run(self, player, block1, block2, block3):
+        global currentScore
         if player.notDead:
             self.playerSpeed = block1.speed
             if(player.grounded):
@@ -204,7 +207,7 @@ class ai:
             self.finalOutput = self.modOut1[0] * ((self.modOut2[1]*self.modOut3[2])-(self.modOut2[2]*self.modOut3[1]))
             self.finalOutput += self.modOut1[1] * ((self.modOut2[0]*self.modOut3[2])-(self.modOut2[2]*self.modOut3[0]))
             self.finalOutput += self.modOut1[2] * ((self.modOut2[0]*self.modOut3[1])-(self.modOut2[1]*self.modOut3[0]))
-            
+            self.aiScore = currentScore
             if(self.finalOutput < self.key):
                 self.finalOutput = 1
             else:
@@ -225,7 +228,7 @@ class learningModule():
 
     def getMods(self):
         for i in range(5):
-            tempString = openFile.readline(i)
+            tempString = readStream.readline(i)
             for j in range(5):
                 spaceIndex = tempString.find(" ")
                 self.inputArr[j] = tempString[:spaceIndex]
@@ -251,7 +254,7 @@ class learningModule():
     def improveNodes(self, aiList):
         global keyMin, keyMax, min1, min2, min3, max1, max2, max3
         #TODO: make some algorithm to determine the new range
-        #Below is a makeshift temporary solution
+        #Below is a finished solution (somewhat) I hope it works
         for i in range(5):
             for j in range(5):
                 if self.oldMods[i, 4] > self.oldMods[j, 4]:
@@ -293,6 +296,11 @@ ai3 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 ai4 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 ai = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 aiList = [ai, ai1, ai2, ai3, ai4]
+ai.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai1.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai2.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai3.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+ai4.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 learningModule = learningModule()
 
 def reset():
@@ -317,7 +325,7 @@ class scoreThread(threading.Thread):
     def run(self):
         scoreCounter(blocks[0], blocks[1], blocks[2], playerList, delay)
 
-def main():
+def main(aiList, blocks, playerList, learningModule):
     score = scoreThread("thread1", 1)
     score.start()
     while True:
@@ -329,21 +337,14 @@ def main():
             if event.type == pygame.QUIT:
                 break
 
-        if player.collisionDetect(blocks) and player.notDead:
-            openFile.write(str(ai.weights[0]) + " " + str(ai.weights[1]) + " " + str(ai.weights[2]) + " " + str(ai.key) + " " + str(ai.aiScore))
-            player.delete()
-        if player1.collisionDetect(blocks) and player1.notDead:
-            openFile.write(str(ai1.weights[0]) + " " + str(ai1.weights[1]) + " " + str(ai1.weights[2]) + " " + str(ai1.key) + " " + str(ai1.aiScore))
-            player1.delete()
-        if player2.collisionDetect(blocks) and player2.notDead:
-            openFile.write(str(ai2.weights[0]) + " " + str(ai2.weights[1]) + " " + str(ai2.weights[2]) + " " + str(ai2.key) + " " + str(ai2.aiScore))
-            player2.delete()
-        if player3.collisionDetect(blocks) and player3.notDead:
-            openFile.write(str(ai3.weights[0]) + " " + str(ai3.weights[1]) + " " + str(ai3.weights[2]) + " " + str(ai3.key) + " " + str(ai3.aiScore))
-            player3.delete()
-        if player4.collisionDetect(blocks) and player4.notDead:
-            openFile.write(str(ai4.weights[0]) + " " + str(ai4.weights[1]) + " " + str(ai4.weights[2]) + " " + str(ai4.key) + " " + str(ai4.aiScore))
-            player4.delete()
+        j = 0
+        for i in playerList:
+            if i.collisionDetect(blocks) and i.notDead:
+                writeStream.write(str(aiList[j].weights[0]) + " " + str(aiList[j].weights[1]) + " " + str(aiList[j].weights[2]) + " " + str(aiList[j].key) + " " + str(aiList[j].aiScore))
+                print(str(aiList[j].weights[0]) + " " + str(aiList[j].weights[1]) + " " + str(aiList[j].weights[2]) + " " + str(aiList[j].key) + " " + str(aiList[j].aiScore))
+                i.delete()
+            j += 1
+
         if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
             break
 
@@ -356,16 +357,12 @@ def main():
         ai2.run(player2, block1, block2, block3)
         ai3.run(player3, block1, block2, block3)
         ai4.run(player4, block1, block2, block3)
-        if(ai.finalOutput == 1):
-            player.jump()
-        if(ai1.finalOutput == 1):
-            player1.jump()
-        if(ai2.finalOutput == 1):
-            player2.jump()
-        if(ai3.finalOutput == 1):
-            player3.jump()
-        if(ai4.finalOutput == 1):
-            player4.jump()
+
+        j = 0
+        for i in aiList:
+            if i.finalOutput == 1:
+                playerList[j].jump()
+            j += 1
 
         # Draws all objects onto the screen
         for i in blocks:
@@ -377,13 +374,13 @@ def main():
         screen.blit(scoreText, (1, 1))
 
         # not completely sure what this does kek, I think it's for double buffers
-        # TODO: does anyone wanna confirm this lol?
+        # TODO: does anyone wanna confirm this lol? how about no
         pygame.display.flip()
         # this updates graphics, pygame is buffered and switches around buffers
         pygame.time.wait(40)
         # this limits game to ?? updates/sec
 
 if __name__ == "__main__":
-    main()
+    main(aiList, blocks, playerList, learningModule)
     pygame.display.quit()
     sys.exit()
