@@ -316,6 +316,23 @@ def reset():
     blocks[0].speed = 10
     blocks[1].speed = 10
     blocks[2].speed = 10
+    player = controller()
+    player1 = controller()
+    player2 = controller()
+    player3 = controller()
+    player4 = controller()
+    playerList = [player, player1, player2, player3, player4]
+    ai1 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai2 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai3 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai4 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    aiList = [ai, ai1, ai2, ai3, ai4]
+    ai.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai1.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai2.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai3.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
+    ai4.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 
 class scoreThread(threading.Thread):
     def __init__(self, Name, ID):
@@ -346,7 +363,7 @@ def main(aiList, blocks, playerList, learningModule):
             j += 1
 
         if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
-            break
+            reset()
 
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
