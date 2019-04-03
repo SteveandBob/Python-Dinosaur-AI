@@ -304,9 +304,11 @@ ai4.reroll(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 learningModule = learningModule()
 
 def reset():
+    global iteration
     global delay
     global blocks
     global currentScore
+    iteration += 1
     currentScore = 0
     delay = 100
     del block1
