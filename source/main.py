@@ -40,7 +40,6 @@ class enemy:
         # when this block is spawned determines the position of the enemy
 
     def update(self):
-
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
@@ -55,6 +54,27 @@ class enemy:
             self.minRandDist += 20
             self.maxRandDist += 20
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
+
+dinoGroup = pygame.sprite.Group()
+
+class dino(pygame.sprite.Sprite):
+    def __init__(self, groundHeight):
+        self.yPos = groundHeight
+        self.xPos = 50
+        self.dinoImage = pygame.image.load("./dinosaur.png")
+        self.dinoRect = self.dinoImage.get_rect()
+        self.dinoRect = self.dinoRect.move([50, groundHeight])
+        self.width = 45
+        self.height = 70
+        self.grounded = True
+        pygame.sprite.Sprite.__init__(self, dinoGroup)
+
+dino1 = dino(groundHeight)
+dino2 = dino(groundHeight)
+dino3 = dino(groundHeight)
+dino4 = dino(groundHeight)
+dino5 = dino(groundHeight)
+dinos = [dino1, dino2, dino3, dino4, dino5]
 
 class controller:
     def __init__(self):
@@ -89,18 +109,19 @@ class controller:
                 return True
         return False
 
-    def update(self, blocklist):
+    def update(self, blocklist, dinos):
         if self.notDead:
             # updates the player and draws it
             # also handles jump after it has been initiated
-            if not self.grounded:
-                self.yPos -= self.jumpIncrement
-                self.dinoRect = self.dinoRect.move([0, -self.jumpIncrement])
-                self.jumpIncrement -= 2
-            if self.yPos >= 200:
-                self.grounded = True
-                self.dinoRect.move([0, 200 - self.yPos])
-                self.yPos = 200
+            for i in dinos:
+                if not i.grounded:
+                    i.yPos -= i.jumpIncrement
+                    i.dinoRect = i.dinoRect.move([0, -i.jumpIncrement])
+                    i.jumpIncrement -= 2
+                if i.yPos >= 200:
+                    i.grounded = True
+                    i.dinoRect.move([0, 200 - i.yPos])
+                    i.yPos = 200
             # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
             screen.blit(self.dino, self.dinoRect)
             # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
