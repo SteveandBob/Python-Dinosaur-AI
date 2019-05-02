@@ -25,9 +25,10 @@ max2 = 1
 max3 = 1000
 iteration = 1
 
-class enemy:
+class enemy(pygame.sprite.Sprite):
     global currentScore
     def __init__(self, beginPos):
+        pygame.sprite.Sprite.__init__(self)
         self.xPos = beginPos
         self.cacti = pygame.image.load("./cacti.png")
         self.cactiRect = self.cacti.get_rect()
@@ -39,8 +40,7 @@ class enemy:
         # the position the enemy begins at
         # when this block is spawned determines the position of the enemy
 
-    def update(self):
-
+    def __update__(self):
         self.xPos -= self.speed
         self.cactiRect = self.cactiRect.move([-self.speed, 0])
         if self.xPos <= 0:
@@ -50,14 +50,14 @@ class enemy:
             # basically, the above line makes sure the dinosaur always has enough space to make the jump
             self.cactiRect = self.cactiRect.move([(1000 + self.randomDist) - self.xPos, 0])
             self.xPos = 1000 + self.randomDist
-        screen.blit(self.cacti, self.cactiRect)
         if currentScore % 100 == 0:
             self.minRandDist += 20
             self.maxRandDist += 20
         # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, (groundHeight + self.height), self.height, self.height))
 
-class controller:
+class controller(pygame.sprite.Sprite):
     def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
         self.notDead = True
         self.yPos = groundHeight
         self.xPos = 50
@@ -89,7 +89,7 @@ class controller:
                 return True
         return False
 
-    def update(self, blocklist):
+    def __update__(self):
         if self.notDead:
             # updates the player and draws it
             # also handles jump after it has been initiated
@@ -102,7 +102,6 @@ class controller:
                 self.dinoRect.move([0, 200 - self.yPos])
                 self.yPos = 200
             # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
-            screen.blit(self.dino, self.dinoRect)
             # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
     def delete(self):
@@ -275,21 +274,22 @@ class learningModule():
         self.newKeyMin = self.oldMods[0, 3] - self.tolerance
         self.newKeyMax = self.oldMods[0, 3] - self.tolerance
 
+blocks = pygame.sprite.Group
+playerList = pygame.sprite.Group
 block1 = enemy(1000)
 block2 = enemy(1400)
 block3 = enemy(1800)
-blocks = [block1, block2, block3]
+blocks.add(block1, block2, block3)
 delay = 100
 currentScore = 0
-blocks[0].speed = 10
-blocks[1].speed = 10
-blocks[2].speed = 10
+for i in blocks:
+    i.speed = 10
 player = controller()
 player1 = controller()
 player2 = controller()
 player3 = controller()
 player4 = controller()
-playerList = [player, player1, player2, player3, player4]
+playerList.add(player, player1, player2, player3, player4)
 ai1 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 ai2 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
 ai3 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
@@ -311,6 +311,8 @@ def reset():
     iteration += 1
     currentScore = 0
     delay = 100
+    blocks.empty()
+    playerList.empty()
     del block1
     del block2
     del block3
@@ -327,16 +329,17 @@ def reset():
     block1 = enemy(1000)
     block2 = enemy(1400)
     block3 = enemy(1800)
-    blocks = [block1, block2, block3]
-    blocks[0].speed = 10
-    blocks[1].speed = 10
-    blocks[2].speed = 10
+    blocks.add(block1, block2, block3)
+    delay = 100
+    currentScore = 0
+    for i in blocks:
+        i.speed = 10
     player = controller()
     player1 = controller()
     player2 = controller()
     player3 = controller()
     player4 = controller()
-    playerList = [player, player1, player2, player3, player4]
+    playerList.add(player, player1, player2, player3, player4)
     ai1 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
     ai2 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
     ai3 = ai(keyMin, keyMax, min1, min2, min3, max1, max2, max3)
@@ -377,7 +380,7 @@ def main(aiList, blocks, playerList, learningModule):
                 i.delete()
             j += 1
 
-        if not player.notDead and not player1.notDead and not player2.notDead and not player3. notDead and not player4.notDead:
+        if not player.notDead and not player1.notDead and not player2.notDead and not player3.notDead and not player4.notDead:
             reset()
 
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
@@ -391,16 +394,16 @@ def main(aiList, blocks, playerList, learningModule):
         ai4.run(player4, block1, block2, block3)
 
         j = 0
-        for i in aiList:
-            if i.finalOutput == 1:
-                playerList[j].jump()
+        for i in playerList:
+            if aiList[j].finalOutput == 1:
+                i.jump()
             j += 1
 
         # Draws all objects onto the screen
-        for i in blocks:
-            i.update()
-        for i in playerList:
-            i.update(blocks)
+        blocks.update()
+        blocks.draw()
+        playerList.update()
+        playerList.draw()
         # Handles Score text
         scoreText = scoreFont.render(str(currentScore), False, (0, 0, 0))
         screen.blit(scoreText, (1, 1))
