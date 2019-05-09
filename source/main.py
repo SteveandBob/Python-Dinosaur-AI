@@ -93,14 +93,15 @@ class controller(pygame.sprite.Sprite):
         if self.notDead:
             # updates the player and draws it
             # also handles jump after it has been initiated
-            if not self.grounded:
-                self.yPos -= self.jumpIncrement
-                self.dinoRect = self.dinoRect.move([0, -self.jumpIncrement])
-                self.jumpIncrement -= 2
-            if self.yPos >= 200:
-                self.grounded = True
-                self.dinoRect.move([0, 200 - self.yPos])
-                self.yPos = 200
+            for i in dinos:
+                if not i.grounded:
+                    i.yPos -= i.jumpIncrement
+                    i.dinoRect = i.dinoRect.move([0, -i.jumpIncrement])
+                    i.jumpIncrement -= 2
+                if i.yPos >= 200:
+                    i.grounded = True
+                    i.dinoRect.move([0, 200 - i.yPos])
+                    i.yPos = 200
             # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
             # pygame.draw.rect(screen, (65, 65, 65), pygame.Rect(self.xPos, self.yPos, self.width, self.height))
 
