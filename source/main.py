@@ -146,7 +146,7 @@ class ai:
         self.max1 = max1
         self.max2 = max2
         self.max3 = max3
-        self.key = random.randint(self.keyMin, self.keyMax)
+        self.key = random.uniform(self.keyMin, self.keyMax)
         self.weight1 = random.uniform(self.min1, self.max1)
         self.weight2 = random.uniform(self.min2, self.max2)
         self.weight3 = random.uniform(self.min3, self.max3)
@@ -169,7 +169,7 @@ class ai:
         self.max1 = max1
         self.max2 = max2
         self.max3 = max3
-        self.key = random.randint(self.keyMin, self.keyMax)
+        self.key = random.uniform(self.keyMin, self.keyMax)
         self.weight1 = random.uniform(self.min1, self.max1)
         self.weight2 = random.uniform(self.min2, self.max2)
         self.weight3 = random.uniform(self.min3, self.max3)
@@ -217,20 +217,7 @@ class learningModule():
         self.inputArr = ["", "", "", "", ""]
         self.tempStr = ""
         self.tolerance = 500
-    def getMods(self):
-        readStream = open("weight_values.txt", "r")
-        self.oldMods = []
-        for i in range(5):
-            tempString = readStream.readline(i)
-            print (tempString)
-            tempList = tempString.split()
-            print (tempList)
-            for j in tempList:
-                j = j.strip()
-                j = float(j)
-            self.oldMods.append(tempList)
-            print (self.oldMods[i])
-        readStream.close()
+        self.nodeTolerance = 400
     def evaluateTolerance(self, iteration):
         if iteration == 1:
             self.oldScore = 0
@@ -243,11 +230,24 @@ class learningModule():
                 self.newScore += self.oldMods[i][4]
             self.newScore /= 5
             difference = self.newScore - self.oldScore
-            improvement = (1/10000000)*(difference**3)
+            improvement = (1/10000000)*(difference**3) + 0.0003
             self.tolerance -= improvement
+    def toleranceNodeEval(self, iteration):
+        if iteration == 1:
+            self.oldScore1 = 0
+            for i in range(4):
+                self.oldScore1 += self.oldMods[i][4]
+            self.oldScore1 /= 5
+        else:
+            self.newScore1 = 0
+            for i in range(4):
+                self.newScore1 += self.oldMods[i][4]
+            self.newScore1 /= 5
+            difference1 = self.newScore1 - self.oldScore1
+            improvement1 = (1/10000000)*(difference1**3) + 0.0005
+            self.nodeTolerance -= improvement1
     def improveNodes(self, aiList):
         global keyMin, keyMax, min1, min2, min3, max1, max2, max3
-        self.getMods()
         print (self.oldMods)
         print ("------------------------------------")
         print (keyMin, keyMax)
@@ -256,7 +256,7 @@ class learningModule():
         print (min3, max3)
         print ("------------------------------------")
         #TODO: make some algorithm to determine the new range
-        #Below is a finished solution (somewhat) I hope it works
+        #Below is a finished solution, improvement is impossibily slow and sometimes reverses
         for i in range(5):
             for j in range(5):
                 if self.oldMods[i][4] > self.oldMods[j][4]:
@@ -274,10 +274,21 @@ class learningModule():
                 tempInt += self.oldMods[j][i]
             self.oldMods[1][i] = tempInt
         self.evaluateTolerance(iteration)
+        self.toleranceNodeEval(iteration)
+        print(self.tolerance)
+        print(self.nodeTolerance)
         self.newKeyMin = self.oldMods[0][3] - self.tolerance
         self.newKeyMax = self.oldMods[0][3] + self.tolerance
         keyMin = self.newKeyMin
         keyMax = self.newKeyMax
+        min1 = self.oldMods[0][0] - self.nodeTolerance
+        min2 = self.oldMods[0][1] - self.nodeTolerance
+        min3 = self.oldMods[0][2] - self.nodeTolerance
+        max1 = self.oldMods[0][0] + self.nodeTolerance
+        max2 = self.oldMods[0][1] + self.nodeTolerance
+        max3 = self.oldMods[0][2] + self.nodeTolerance
+        #TODO: Finish improvement module, add improvement to mins and maxs of nodes
+        
 
 blocks = pygame.sprite.Group()
 playerList = pygame.sprite.Group()
@@ -355,9 +366,11 @@ def main(aiList, blocks, playerList, learningModule):
         j = 0
         for i in playerList:
             if i.collisionDetect(blocks) and i.notDead:
-                writeStream = open("weight_values.txt", "a")
-                writeStream.write(str(aiList[j].weights[0]) + " " + str(aiList[j].weights[1]) + " " + str(aiList[j].weights[2]) + " " + str(aiList[j].key) + " " + str(aiList[j].aiScore))
-                writeStream.close()
+                learningModule.oldMods[j][0] = aiList[j].weights[0]
+                learningModule.oldMods[j][1] = aiList[j].weights[1]
+                learningModule.oldMods[j][2] = aiList[j].weights[2]
+                learningModule.oldMods[j][3] = aiList[j].key
+                learningModule.oldMods[j][4] = aiList[j].aiScore
                 print(str(aiList[j].weights[0]) + " " + str(aiList[j].weights[1]) + " " + str(aiList[j].weights[2]) + " " + str(aiList[j].key) + " " + str(aiList[j].aiScore))
                 i.notDead = False
             j += 1
@@ -365,9 +378,6 @@ def main(aiList, blocks, playerList, learningModule):
         if not player.notDead and not player1.notDead and not player2.notDead and not player3.notDead and not player4.notDead:
             reset()
             learningModule.improveNodes(aiList)
-            writeStream = open("weight_values.txt", "w")
-            writeStream.write("")
-            writeStream.close()
 
         #     if player.grounded and event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
         #         player.jump()
