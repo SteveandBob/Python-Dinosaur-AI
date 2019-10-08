@@ -11,3 +11,5 @@
 0.4.4 Jan. 20, 2019 - More bugs squashed, sprites added!
 
 0.4.5 Feb. 12, 2019 - Sound support disabled to decrease CPU resources required
+
+1.0.0 October 7, 2019 - Finished awhile ago but just remembered to update CHANGELOG. Training algorithm is very wonky so suggest using new one.
