@@ -26,4 +26,4 @@ Read the CHANGELOG.md file as it lists a lot of major changes and at which date
 they were completed (not 100% accurate though).
 
 Everythin was done from scratch so the training algorithm is very sketchy and
-only works half the time.
+barely works.
